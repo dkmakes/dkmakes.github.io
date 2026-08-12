@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DK Lee — UX Strategist &amp; Designer</title>
+<meta name="description" content="DK Lee is a UX strategist and designer with 20+ years of experience across finance and commerce — Coupang, HSBC, Samsung Card, and LG Electronics.">
+<meta property="og:title" content="DK Lee — UX Strategist &amp; Designer">
+<meta property="og:description" content="20+ years shaping user-centred products across finance and commerce.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dkmakes.com/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16130f;
+    --ink-soft:#4a453d;
+    --paper:#faf8f4;
+    --paper-2:#f1ede5;
+    --line:#e3ddd2;
+    --accent:#c8502d;
+    --accent-soft:#f3e3db;
+    --white:#ffffff;
+    --maxw:1160px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+  .display{font-family:'Fraunces',serif;font-weight:500;letter-spacing:-.01em;line-height:1.04}
+
+  /* ---- nav ---- */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;height:66px}
+  .brand{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .brand span{color:var(--accent)}
+  nav.links{display:flex;gap:30px;font-size:14.5px;font-weight:500}
+  nav.links a{color:var(--ink-soft);transition:color .18s}
+  nav.links a:hover{color:var(--ink)}
+  .nav-toggle{display:none;background:none;border:0;font-size:22px;cursor:pointer;color:var(--ink)}
+
+  /* ---- hero ---- */
+  .hero{padding:76px 0 60px}
+  .hero-head{display:flex;align-items:center;gap:18px;margin-bottom:34px}
+  .avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:center 32%;filter:grayscale(6%);box-shadow:0 6px 18px -6px rgba(22,19,15,.35)}
+  .hero-name{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-top:2px}
+  .eyebrow{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+  .hero-title{font-size:clamp(40px,6vw,68px);margin-bottom:24px;max-width:16ch}
+  .hero h1 em{font-style:italic;color:var(--accent)}
+  .hero .lead{font-size:19px;color:var(--ink-soft);max-width:46ch;margin-bottom:32px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 24px;border-radius:100px;font-size:15px;font-weight:600;transition:transform .18s,background .18s,box-shadow .18s}
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(22,19,15,.2)}
+  .btn-ghost{border:1.5px solid var(--line);color:var(--ink)}
+  .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px)}
+
+  /* ---- marquee logos ---- */
+  .logos{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;margin-top:26px}
+  .logos-inner{display:flex;align-items:flex-end;gap:40px;flex-wrap:wrap;justify-content:center}
+  .logo-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .logo-item span{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#9b9488}
+  .logos span.dot{color:var(--line)}
+  .hlogo{height:26px;width:auto;filter:grayscale(100%);opacity:.62;transition:filter .3s,opacity .3s}
+  .logo-item:hover .hlogo{filter:grayscale(0%);opacity:1}
+  .logo-item:hover span{color:var(--ink-soft)}
+  .hlogo.coupang{height:20px}
+  .hlogo.hsbc{height:26px}
+  .hlogo.samsung{height:19px}
+  .hlogo.lg{height:34px}
+  .hlogo.kaist{height:23px}
+
+  /* ---- section base ---- */
+  section{padding:88px 0}
+  .sec-head{max-width:640px;margin-bottom:48px}
+  .sec-label{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+  .sec-head h2{font-size:clamp(30px,4.4vw,46px);margin-bottom:16px}
+  .sec-head p{font-size:17.5px;color:var(--ink-soft)}
+
+  /* ---- featured case studies ---- */
+  .featured{background:var(--paper-2)}
+  .featured-light{background:var(--paper);border-top:1px solid var(--line)}
+  .featured-light .case + .case{border-top:1px solid var(--line)}
+  .case{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:34px 0}
+  .case + .case{border-top:1px solid var(--line);margin-top:22px;padding-top:56px}
+  .case.rev .case-media{order:2}
+  .case-media{position:relative}
+  .case-shots{display:flex;gap:14px;justify-content:center}
+  .case-shots img{width:47%;border-radius:20px;box-shadow:0 20px 44px -18px rgba(22,19,15,.42);border:6px solid #101010}
+  .case-shots.single img{width:100%;border-radius:14px;border:1px solid var(--line);box-shadow:0 18px 40px -20px rgba(22,19,15,.3)}
+  .case-meta{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .case h3{font-size:clamp(26px,3.4vw,36px);margin-bottom:16px}
+  .case p.desc{font-size:16.5px;color:var(--ink-soft);margin-bottom:24px}
+  .metrics{display:flex;gap:30px;margin-bottom:28px;flex-wrap:wrap}
+  .metric b{font-family:'Fraunces',serif;font-size:34px;display:block;line-height:1;color:var(--ink)}
+  .metric b i{font-style:normal;font-size:20px;color:var(--accent)}
+  .metric small{font-size:12.5px;color:var(--ink-soft);letter-spacing:.02em}
+  .case-link{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;color:var(--ink);border-bottom:2px solid var(--accent);padding-bottom:3px;transition:gap .2s}
+  .case-link:hover{gap:14px}
+
+  /* ---- work grid ---- */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .22s,box-shadow .22s}
+  .card:hover{transform:translateY(-5px);box-shadow:0 22px 44px -22px rgba(22,19,15,.34)}
+  .card-img{aspect-ratio:16/11;overflow:hidden;background:var(--paper-2)}
+  .card-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+  .card:hover .card-img img{transform:scale(1.04)}
+  .card-body{padding:20px 22px 24px}
+  .card-tag{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:9px}
+  .card-body h4{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin-bottom:7px}
+  .card-body p{font-size:14px;color:var(--ink-soft);line-height:1.5}
+  .card-foot{margin-top:14px;font-size:12.5px;color:#9b9488;display:flex;justify-content:space-between;align-items:center}
+  .card-foot .logo{height:17px;width:auto;opacity:.9;filter:grayscale(100%);transition:filter .25s,opacity .25s}
+  .card:hover .card-foot .logo{filter:grayscale(0%);opacity:1}
+  .card-foot .logo.lg{height:22px}
+  .card-foot .logo.hsbc{height:16px}
+  .card-foot .logo.samsung{height:14px}
+  .card-foot .logo.coupang{height:14px}
+
+  /* ---- about ---- */
+  .about{background:var(--paper-2)}
+  .about-grid{display:grid;grid-template-columns:.8fr 1.25fr;gap:60px;align-items:start}
+  .about-side{position:sticky;top:90px}
+  .about-copy p{font-size:17px;color:var(--ink-soft);margin-bottom:18px}
+  .about-copy p strong{color:var(--ink);font-weight:600}
+  .tl{margin-top:34px;border-top:1px solid var(--line)}
+  .tl-row{display:grid;grid-template-columns:78px 40px 1fr;gap:18px;padding:16px 0;border-bottom:1px solid var(--line);align-items:center}
+  .tl-row .yr{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--accent)}
+  .tl-row .tl-logo{display:flex;align-items:center;justify-content:center;height:24px}
+  .tl-row .tl-logo img{max-height:22px;max-width:38px;width:auto;filter:grayscale(100%);opacity:.85}
+  .tl-row .role b{display:block;font-size:15.5px;font-weight:600}
+  .tl-row .role small{font-size:13.5px;color:var(--ink-soft)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:0}
+  .chip{font-size:12.5px;font-weight:500;padding:7px 14px;border-radius:100px;background:var(--white);border:1px solid var(--line);color:var(--ink-soft)}
+  .facts{display:flex;gap:34px;margin-top:34px;flex-wrap:wrap;padding-top:30px;border-top:1px solid var(--line)}
+  .fact b{font-family:'Fraunces',serif;font-size:34px;display:block;line-height:1}
+  .fact small{font-size:12.5px;color:var(--ink-soft)}
+
+  /* ---- contact ---- */
+  .contact{text-align:center}
+  .contact h2{font-size:clamp(34px,5vw,60px);margin-bottom:20px}
+  .contact .lead{font-size:18px;color:var(--ink-soft);max-width:40ch;margin:0 auto 36px}
+  .contact-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .contact-mail{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,32px);font-weight:500;margin-top:40px;display:inline-block;border-bottom:2px solid var(--accent);padding-bottom:5px}
+
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--line);padding:34px 0;font-size:13.5px;color:#9b9488}
+  .foot-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+  .foot-inner a{color:var(--ink-soft)}
+  .foot-inner a:hover{color:var(--ink)}
+
+  /* ---- reveal ---- */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ---- responsive ---- */
+  @media(max-width:900px){
+    .case,.case.rev .case-media{grid-template-columns:1fr;order:0}
+    .case-media{order:0 !important}
+    .about-grid{grid-template-columns:1fr;gap:36px}
+    .about-side{position:static}
+    .grid{grid-template-columns:repeat(2,1fr)}
+    nav.links{display:none}
+    nav.links.open{display:flex;position:absolute;top:66px;left:0;right:0;flex-direction:column;background:var(--paper);border-bottom:1px solid var(--line);padding:18px 28px;gap:18px}
+    .nav-toggle{display:block}
+  }
+  @media(max-width:560px){
+    .grid{grid-template-columns:1fr}
+    section{padding:64px 0}
+    .hero{padding:60px 0 40px}
+    .metrics{gap:22px}
+  }
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+  /* lightbox */
+  .lb-overlay{position:fixed;inset:0;z-index:200;background:rgba(16,13,11,.92);display:none;align-items:center;justify-content:center;padding:40px}
+  .lb-overlay.on{display:flex}
+  .lb-fig{margin:0;max-width:92vw;max-height:90vh;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .lb-img{max-width:92vw;max-height:82vh;width:auto;height:auto;border-radius:10px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6);object-fit:contain}
+  .lb-cap{color:#f1ede5;font-size:14px;text-align:center;max-width:60ch}
+  .lb-close{position:absolute;top:22px;right:26px;background:none;border:0;color:#fff;font-size:38px;line-height:1;cursor:pointer;opacity:.8}
+  .lb-close:hover{opacity:1}
+  .lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.1);border:0;color:#fff;font-size:32px;width:52px;height:52px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+  .lb-nav:hover{background:rgba(255,255,255,.22)}
+  .lb-prev{left:24px}.lb-next{right:24px}
+  .lb-count{position:absolute;bottom:26px;left:0;right:0;text-align:center;color:#f1ede5;font-size:13px;opacity:.8}
+  @media(max-width:560px){.lb-nav{width:42px;height:42px;font-size:26px}.lb-prev{left:8px}.lb-next{right:8px}.lb-overlay{padding:16px}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a href="#top" class="brand">DK<span>.</span>Lee</a>
+    <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
+    <nav class="links" id="nav">
+      <a href="#work">Work</a>
+      <a href="#featured">Case Studies</a>
+      <a href="#about">About</a>
+      <a href="assets/DK-Lee-Resume.pdf" target="_blank" rel="noopener">Resume</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-head">
+      <img class="avatar" src="assets/profile-dklee.jpg" alt="DK Lee">
+      <div>
+        <div class="eyebrow">UX Strategist &amp; Designer</div>
+        <div class="hero-name">DK Lee</div>
+      </div>
+    </div>
+    <h1 class="display hero-title">Twenty years of designing for <em>how people decide.</em></h1>
+    <p class="lead">I shape user-centred products at the intersection of finance and commerce — from live commerce to digital banking to smart-home IoT.</p>
+    <div class="hero-cta">
+      <a href="#featured" class="btn btn-primary">View case studies →</a>
+      <a href="#contact" class="btn btn-ghost">Get in touch</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="logos">
+      <div class="logos-inner">
+        <div class="logo-item"><img class="hlogo coupang" src="assets/logos/coupang.png" alt="Coupang"><span>Coupang</span></div>
+        <div class="logo-item"><img class="hlogo hsbc" src="assets/logos/hsbc.svg" alt="HSBC"><span>HSBC</span></div>
+        <div class="logo-item"><img class="hlogo samsung" src="assets/logos/samsung.png" alt="Samsung Card"><span>Samsung Card</span></div>
+        <div class="logo-item"><img class="hlogo lg" src="assets/logos/lg.png" alt="LG Electronics"><span>LG Electronics</span></div>
+        <div class="logo-item"><img class="hlogo kaist" src="assets/logos/kaist.png" alt="KAIST"><span>KAIST</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MORE WORK -->
+<section id="work">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">Selected work</div>
+      <h2 class="display">A career across finance, commerce &amp; consumer tech.</h2>
+      <p>Ten projects from Coupang, HSBC, Samsung Card, and LG Electronics — tap any to read more.</p>
+    </div>
+    <div class="grid">
+
+      <a class="card reveal" href="coupang-live.html">
+        <div class="card-img"><img src="assets/coup_1.jpg" alt="Coupang Live"></div>
+        <div class="card-body">
+          <div class="card-tag">Live Commerce</div>
+          <h4>Coupang Live</h4>
+          <p>End-to-end UX for a live/VOD shopping platform across customer, creator, and vendor apps.</p>
+          <div class="card-foot"><img class="logo coupang" src="assets/logos/coupang.png" alt="Coupang"><span>2022</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="hkdco.html">
+        <div class="card-img"><img src="assets/HK_DCO.jpg" alt="HSBC account opening"></div>
+        <div class="card-body">
+          <div class="card-tag">Digital Banking</div>
+          <h4>HK Account Opening</h4>
+          <p>Straight-through onboarding that opens a bank account with no branch visit for new-to-bank customers.</p>
+          <div class="card-foot"><img class="logo hsbc" src="assets/logos/hsbc.svg" alt="HSBC"><span>2019</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="twins.html">
+        <div class="card-img"><img src="assets/twins-card.jpg" alt="HK & China dual account journey"></div>
+        <div class="card-body">
+          <div class="card-tag">Digital Banking</div>
+          <h4>HK &amp; China Dual Accounts</h4>
+          <p>One onboarding journey for two markets, embedded inside WeChat for Chinese residents.</p>
+          <div class="card-foot"><img class="logo hsbc" src="assets/logos/hsbc.svg" alt="HSBC"><span>2020</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="samsung-card.html">
+        <div class="card-img"><img src="assets/cabin.jpg" alt="Samsung Card homepage"></div>
+        <div class="card-body">
+          <div class="card-tag">Web · IA</div>
+          <h4>Samsung Card Homepage</h4>
+          <p>Reorganised a complex top-level information structure into a single, scannable landing page.</p>
+          <div class="card-foot"><img class="logo samsung" src="assets/logos/samsung.png" alt="Samsung"><span>2016–18</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="directa.html">
+        <div class="card-img"><img src="assets/cake.jpg" alt="Direct Auto finance"></div>
+        <div class="card-body">
+          <div class="card-tag">Fintech</div>
+          <h4>Direct Auto</h4>
+          <p>Finance a new car with a credit card in a few clicks — the first service of its kind in Korea.</p>
+          <div class="card-foot"><img class="logo samsung" src="assets/logos/samsung.png" alt="Samsung"><span>2016</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="ecommerce.html">
+        <div class="card-img"><img src="assets/circus.jpg" alt="Samsung Card e-commerce"></div>
+        <div class="card-body">
+          <div class="card-tag">E-commerce</div>
+          <h4>Members' Shopping Mall</h4>
+          <p>A UX-led revamp of the members-only online shopping experience.</p>
+          <div class="card-foot"><img class="logo samsung" src="assets/logos/samsung.png" alt="Samsung"><span>2016</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="kids.html">
+        <div class="card-img"><img src="assets/kids.jpg" alt="Kids Gomgom app"></div>
+        <div class="card-body">
+          <div class="card-tag">Mobile App</div>
+          <h4>Kids Gomgom</h4>
+          <p>A creativity app for children aged 4–7 and their parents, built around a growing relationship.</p>
+          <div class="card-foot"><img class="logo samsung" src="assets/logos/samsung.png" alt="Samsung"><span>2018</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="smarth.html">
+        <div class="card-img"><img src="assets/game.jpg" alt="LG Smart Home"></div>
+        <div class="card-body">
+          <div class="card-tag">IoT</div>
+          <h4>LG Smart Home</h4>
+          <p>LG's first all-in-one IoT app unifying fridges, washers, vacuums, and TVs. Launched at CES 2014.</p>
+          <div class="card-foot"><img class="logo lg" src="assets/logos/lg.png" alt="LG Electronics"><span>2014</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="thanku.html">
+        <div class="card-img"><img src="assets/submarine.jpg" alt="ThankU Bar"></div>
+        <div class="card-body">
+          <div class="card-tag">Interactive Device</div>
+          <h4>ThankU Bar</h4>
+          <p>An interactive checkout-divider that fit seamlessly into the mart shopping experience.</p>
+          <div class="card-foot"><img class="logo samsung" src="assets/logos/samsung.png" alt="Samsung"><span>2015</span></div>
+        </div>
+      </a>
+
+      <a class="card reveal" href="prototyping.html">
+        <div class="card-img"><img src="assets/safe.jpg" alt="NFC prototyping"></div>
+        <div class="card-body">
+          <div class="card-tag">Prototype</div>
+          <h4>NFC Card Identity</h4>
+          <p>Tapping a credit card to surface personalised weather, headlines, and updates — the card as identity.</p>
+          <div class="card-foot"><span>Concept</span><span>2015</span></div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED CASE STUDIES -->
+<section class="featured featured-light" id="featured">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">In depth</div>
+      <h2 class="display">Two problems, followed end to end.</h2>
+      <p>The full arc — business goal, hypothesis, prototype, and measured outcome — for two products I led from research to shipped result.</p>
+    </div>
+
+    <!-- Coupang -->
+    <div class="case reveal">
+      <div class="case-media">
+        <div class="case-shots">
+          <img src="assets/coupang-live-3.jpg" alt="Coupang Live — real-time purchase nudge" data-zoom="assets/coupang-live-3.jpg">
+          <img src="assets/coupang-live-6.jpg" alt="Coupang Live — add-to-cart social proof" data-zoom="assets/coupang-live-6.jpg">
+        </div>
+      </div>
+      <div class="case-body">
+        <div class="case-meta">Coupang · Live Commerce · 2022</div>
+        <h3 class="display">Turning live viewers into buyers</h3>
+        <p class="desc">Live shopping had reach but weak conversion. I introduced real-time purchase &amp; cart alerts to trigger a sense of urgency, a like button for engagement, and a "recommended" drawer to keep browsers inside the stream.</p>
+        <div class="metrics">
+          <div class="metric"><b>+14<i>%</i></b><small>Purchase conversion (CVR)</small></div>
+          <div class="metric"><b>-10<i>%p</i></b><small>Drop-off rate</small></div>
+        </div>
+        <a href="coupang-live.html" class="case-link">Read the full case study →</a>
+      </div>
+    </div>
+
+    <!-- Samsung -->
+    <div class="case rev reveal">
+      <div class="case-media">
+        <div class="case-shots single">
+          <img src="assets/detail.jpg" alt="Samsung Card website redesign" data-zoom="assets/detail.jpg">
+        </div>
+      </div>
+      <div class="case-body">
+        <div class="case-meta">Samsung Card · Website Renewal · 2018</div>
+        <h3 class="display">Making a dense financial site easy to move through</h3>
+        <p class="desc">A complex information structure was burying key services. I simplified the IA around one-click access and layered in personalised content, delivering a consistent experience across mobile and desktop.</p>
+        <div class="metrics">
+          <div class="metric"><b>+12<i>%</i></b><small>Click-through (CTR)</small></div>
+          <div class="metric"><b>+25<i>%</i></b><small>Conversion (CVR)</small></div>
+        </div>
+        <a href="samsung-card.html" class="case-link">Read the full case study →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">About</div>
+      <h2 class="display">I understand people before I design for them.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-side reveal">
+        <div class="chips">
+          <span class="chip">UX Strategy</span>
+          <span class="chip">Interaction Design</span>
+          <span class="chip">Prototyping</span>
+          <span class="chip">Design Research</span>
+          <span class="chip">Figma</span>
+          <span class="chip">Design Ops</span>
+        </div>
+        <div class="facts">
+          <div class="fact"><b>20+</b><small>years experience</small></div>
+          <div class="fact"><b>2</b><small>US patents</small></div>
+          <div class="fact"><b>4</b><small>industries</small></div>
+        </div>
+      </div>
+      <div class="about-copy reveal">
+        <p>I'm an experienced UX consultant with <strong>20+ years across finance and commerce</strong>, focused on tech-driven, user-friendly solutions. My work spans live commerce, digital banking, e-commerce, and smart-home IoT — always starting from the person on the other side of the screen.</p>
+        <p>I've led UX for <strong>Coupang</strong>'s live commerce service, designed straight-through digital onboarding at <strong>HSBC</strong> in Hong Kong, set UX strategy and governance at <strong>Samsung Card</strong>, and built smart-home and next-robot UX at <strong>LG Electronics</strong>. Today I consult for startups and government projects, focusing on AI-driven design automation.</p>
+        <div class="tl">
+          <div class="tl-row"><div class="yr">2023–</div><div class="tl-logo"></div><div class="role"><b>Freelance UX Consultant &amp; Designer</b><small>AI-driven design automation, startups &amp; government projects</small></div></div>
+          <div class="tl-row"><div class="yr">2021–23</div><div class="tl-logo"><img src="assets/logos/coupang.png" alt="Coupang"></div><div class="role"><b>Senior Manager, Live Commerce UX</b><small>Coupang, Coupang Media Group</small></div></div>
+          <div class="tl-row"><div class="yr">2018–20</div><div class="tl-logo"><img src="assets/logos/hsbc.svg" alt="HSBC"></div><div class="role"><b>Senior Product UX Design Manager</b><small>HSBC, Retail Banking &amp; Wealth Management, Hong Kong</small></div></div>
+          <div class="tl-row"><div class="yr">2014–18</div><div class="tl-logo"><img src="assets/logos/samsung.png" alt="Samsung"></div><div class="role"><b>UX Strategist &amp; Designer</b><small>Samsung Card, UX Team</small></div></div>
+          <div class="tl-row"><div class="yr">2004–14</div><div class="tl-logo"><img src="assets/logos/lg.png" alt="LG Electronics"></div><div class="role"><b>Project Leader → Design Strategist</b><small>LG Electronics, Design Center UX Lab</small></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="sec-label" style="color:var(--accent)">Let's talk</div>
+      <h2 class="display">Have a problem worth<br>solving? Let's connect.</h2>
+      <p class="lead">Open to consulting, product design, and UX strategy work. I'll reply within a couple of days.</p>
+      <div class="contact-row">
+        <a href="mailto:dkmakes.com@gmail.com" class="btn btn-primary">Email me</a>
+        <a href="https://www.linkedin.com/in/dkleeux/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn</a>
+      </div>
+      <div><a href="mailto:dkmakes.com@gmail.com" class="contact-mail">dkmakes.com@gmail.com</a></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>© 2026 DK Lee — dkmakes.com</span>
+    <span>UX Strategist &amp; Designer · Seoul / Munich</span>
+  </div>
+</footer>
+
+<script>
+  // reveal on scroll
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  // close mobile nav on link click
+  document.querySelectorAll('#nav a').forEach(a=>a.addEventListener('click',()=>document.getElementById('nav').classList.remove('open')));
+</script>
+<script src="lightbox.js"></script>
+</body>
+</html>
