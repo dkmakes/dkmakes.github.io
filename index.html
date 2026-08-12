@@ -85,6 +85,8 @@
   .sec-label{font-size:13px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
   .sec-head h2{font-size:clamp(30px,4.4vw,46px);margin-bottom:16px}
   .sec-head p{font-size:17.5px;color:var(--ink-soft)}
+  .about-break{display:none}
+  @media(min-width:901px){.about-break{display:inline}}
 
   /* ---- featured case studies ---- */
   .featured{background:var(--paper-2)}
@@ -411,7 +413,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-label">About</div>
-      <h2 class="display">I understand people before I design for them.</h2>
+      <h2 class="display">I understand people before <br class="about-break">I design for them.</h2>
     </div>
     <div class="about-grid">
       <div class="about-side reveal">
