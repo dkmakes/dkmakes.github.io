@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal → Diagnosis → Prompt → Screen</title>
+<style>
+  :root{
+    --ink:#141519;--ink-soft:#5b6070;--line:#e6e8ee;--paper:#fff;--bg:#f6f7f9;
+    --live:#f43f5e;--good:#0ea472;--warn:#e8843c;--accent:#3b5bdb;--accent-soft:#eef2ff;
+    --code-bg:#0f1117;--code-ink:#e7eaf3;--code-key:#89b4ff;--code-str:#9ae6b4;--code-dim:#7b8296;
+    --shadow:0 1px 2px rgba(20,21,25,.04),0 8px 24px rgba(20,21,25,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1280px;margin:0 auto;padding:32px 24px 90px}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:26px;flex-wrap:wrap}
+  .title-block h1{font-size:22px;letter-spacing:-.02em;font-weight:650}
+  .title-block .steps{color:var(--ink-soft);font-size:13px;margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .title-block .steps b{color:var(--accent);font-weight:600}
+  .title-block .steps .arw{opacity:.4}
+  .badge{display:inline-flex;align-items:center;gap:6px;background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;padding:6px 12px;font-size:12.5px;color:var(--ink-soft);white-space:nowrap}
+  .badge b{color:var(--ink);font-weight:600}
+  .grid{display:grid;grid-template-columns:300px 1fr 310px;gap:18px;align-items:start}
+  @media(max-width:1120px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow)}
+  .panel-h{padding:15px 17px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .panel-h h2{font-size:13px;font-weight:650}
+  .panel-h .sub{font-size:11px;color:var(--ink-soft)}
+  .panel-b{padding:16px 17px}
+  .metric{padding:13px 0;border-bottom:1px dashed var(--line)}
+  .metric:last-child{border-bottom:0;padding-bottom:0}.metric:first-child{padding-top:0}
+  .metric-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .metric-name{font-size:12.5px;font-weight:600}
+  .metric-val{font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:660}
+  .metric-val .unit{font-size:10.5px;color:var(--ink-soft);font-weight:500;margin-left:1px}
+  .metric-state{font-size:10.5px;font-weight:600;padding:2px 6px;border-radius:5px;margin-left:7px}
+  .s-good{background:rgba(14,164,114,.1);color:var(--good)}.s-warn{background:rgba(232,132,60,.12);color:var(--warn)}
+  input[type=range]{-webkit-appearance:none;width:100%;height:4px;border-radius:4px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+  input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:#fff;border:2px solid var(--accent);cursor:pointer}
+  .metric-target{font-size:10.5px;color:var(--ink-soft);margin-top:6px}
+  .metric.tripped .metric-name{color:var(--warn)}
+  .hint{font-size:11px;color:var(--ink-soft);margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .diag-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:44px 22px;color:var(--ink-soft)}
+  .diag-empty svg{margin-bottom:12px;opacity:.5}.diag-empty p{font-size:13px;max-width:36ch}
+
+  /* selection summary */
+  .summary{padding:12px 17px;border-bottom:1px solid var(--line);background:#fbfcfe}
+  .summary-h{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:9px;display:flex;align-items:center;gap:6px}
+  .summary-h .cnt{background:var(--accent);color:#fff;border-radius:999px;font-size:9.5px;padding:1px 6px;letter-spacing:0}
+  .sum-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:11.5px}
+  .sum-row:last-child{border-bottom:0}
+  .sum-metric{font-weight:650;white-space:nowrap;display:flex;align-items:center;gap:5px}
+  .sum-metric .dot{width:6px;height:6px;border-radius:50%;background:var(--warn);flex-shrink:0}
+  .sum-arrow{color:#c2c6d2;flex-shrink:0}
+  .sum-part{color:var(--ink-soft);min-width:0}
+  .sum-part b{color:var(--ink);font-weight:600}
+  .sum-tag{display:inline-block;background:var(--accent-soft);color:var(--accent);font-size:10.5px;padding:1px 6px;border-radius:5px;margin:1px 3px 1px 0}
+  .sum-none{color:#b0b5c0;font-style:italic}
+  .sum-ready{margin-left:auto;flex-shrink:0;font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px}
+  .sum-ready.ok{background:rgba(14,164,114,.1);color:var(--good)}
+  .sum-ready.wait{background:#f0f1f4;color:var(--ink-soft)}
+
+  .analysis{padding:16px 17px;border-bottom:1px solid var(--line)}
+  .analysis:last-child{border-bottom:0}
+  .an-k{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--warn);margin-bottom:4px}
+  .an-zone{font-size:14px;font-weight:640;margin-bottom:2px}
+  .an-why{font-size:12px;color:var(--ink-soft);margin-bottom:15px}
+
+  /* stage blocks */
+  .stg{border:1px solid var(--line);border-radius:11px;margin-bottom:12px;overflow:hidden}
+  .stg-h{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#fafbfc;border-bottom:1px solid var(--line)}
+  .stg-n{width:19px;height:19px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;flex-shrink:0}
+  .stg-t{font-size:12px;font-weight:650}
+  .stg-sub{font-size:10.5px;color:var(--ink-soft);margin-left:auto}
+  .stg-b{padding:11px 12px}
+  .stg.locked{opacity:.5;pointer-events:none}
+  .stg.locked .stg-n{background:#c2c6d2}
+
+  /* selectable cause / direction cards */
+  .opt{display:flex;gap:9px;align-items:flex-start;padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:7px;cursor:pointer;transition:.13s;background:#fff}
+  .opt:hover{border-color:#c3ceff}
+  .opt.on{border-color:var(--accent);background:var(--accent-soft)}
+  .opt .box{width:15px;height:15px;border-radius:4px;border:1.5px solid #c2c6d2;flex-shrink:0;margin-top:1px;display:grid;place-items:center}
+  .opt.on .box{background:var(--accent);border-color:var(--accent)}
+  .opt .box svg{display:none}.opt.on .box svg{display:block}
+  .opt-main{flex:1;min-width:0}
+  .opt-title{font-size:12px;font-weight:600}
+  .opt-title .law{color:var(--accent);font-weight:600}
+  .opt-desc{font-size:11px;color:var(--ink-soft);margin-top:1px}
+
+  .add-row{display:flex;gap:6px;margin-top:8px}
+  .add-row input{flex:1;font:inherit;font-size:11.5px;padding:7px 9px;border:1px dashed #c2c6d2;border-radius:8px;background:#fcfcfd;outline:none}
+  .add-row input:focus{border-color:var(--accent);border-style:solid}
+  .add-row button{font:inherit;font-size:11.5px;font-weight:600;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;cursor:pointer;color:var(--ink-soft)}
+  .add-row button:hover{border-color:var(--accent);color:var(--accent)}
+  .add-lbl{font-size:10px;color:var(--ink-soft);margin-top:9px;margin-bottom:5px;font-weight:600;letter-spacing:.02em}
+
+  .btn{font:inherit;font-size:12.5px;font-weight:600;border-radius:9px;padding:8px 15px;cursor:pointer;border:1px solid transparent;transition:.14s}
+  .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#2f4ac2}
+  .btn-primary:disabled{background:#c3c8d4;cursor:not-allowed}
+  .btn-block{width:100%;margin-top:3px}
+
+  /* prompt */
+  .prompt-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;flex-wrap:wrap;gap:6px}
+  .prompt-head .lbl{font-size:11px;font-weight:700;color:var(--ink-soft);letter-spacing:.02em;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .tool-pills{display:flex;gap:5px}
+  .tool-pill{font-size:10.5px;color:var(--ink-soft);border:1px solid var(--line);border-radius:6px;padding:2px 7px;cursor:pointer;background:#fff;font-family:inherit}
+  .tool-pill.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .copy-btn{font-size:10.5px;color:var(--ink-soft);border:1px solid var(--line);border-radius:6px;padding:3px 9px;cursor:pointer;background:#fff;font-family:inherit}
+  .copy-btn:hover{color:var(--ink)}
+  .prompt-code{background:var(--code-bg);color:var(--code-ink);border-radius:10px;padding:13px 14px;
+    font-family:"SF Mono",ui-monospace,Menlo,monospace;font-size:11.5px;line-height:1.62;white-space:pre-wrap;word-break:break-word}
+  .prompt-code .k{color:var(--code-key)}.prompt-code .s{color:var(--code-str)}.prompt-code .dim{color:var(--code-dim)}
+  .prompt-foot{font-size:10.5px;color:var(--ink-soft);margin-top:8px;display:flex;align-items:center;gap:6px}
+  .apply-row{margin-top:11px}
+
+  /* stage / phone */
+  .stage{position:sticky;top:24px}
+  .phone-frame{width:280px;margin:0 auto;background:#0e0f13;border-radius:32px;padding:9px;box-shadow:0 12px 40px rgba(20,21,25,.22)}
+  .phone-screen{background:#fff;border-radius:25px;overflow:hidden;position:relative;height:560px;display:flex;flex-direction:column}
+  .live-top{background:#0e0f13;color:#fff;padding:11px 13px 9px;display:flex;align-items:center;gap:7px;flex-shrink:0}
+  .live-dot{background:var(--live);color:#fff;font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:5px}
+  .live-top .host{font-size:12px;font-weight:500;opacity:.95}
+  .live-top .viewers{margin-left:auto;font-size:11px;opacity:.8;font-variant-numeric:tabular-nums}
+  .live-video{background:linear-gradient(155deg,#c9d3e0,#e8ecf2 60%,#dfe4ec);flex:1;position:relative;overflow:hidden}
+  .live-video .prod-shot{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:108px;height:108px;background:linear-gradient(145deg,#f3f5f8,#dde3ec);border-radius:15px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:grid;place-items:center;color:#9aa2b1;font-size:10.5px}
+  .pace{position:absolute;left:11px;top:11px;background:rgba(20,21,25,.7);color:#fff;font-size:10px;padding:5px 9px;border-radius:8px;display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(-6px);transition:.3s}
+  .pace.show{opacity:1;transform:translateY(0)}
+  .pace .pulse{width:6px;height:6px;border-radius:50%;background:var(--live);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .timer{position:absolute;right:11px;top:11px;background:rgba(244,63,94,.92);color:#fff;font-size:10.5px;font-weight:700;padding:5px 9px;border-radius:8px;font-variant-numeric:tabular-nums;opacity:0;transform:translateY(-6px);transition:.3s}
+  .timer.show{opacity:1;transform:translateY(0)}
+  .buy-toast{position:absolute;left:11px;bottom:13px;background:rgba(20,21,25,.82);color:#fff;font-size:10.5px;padding:6px 10px;border-radius:9px;display:flex;align-items:center;gap:6px;opacity:0;transform:translateY(8px);transition:.3s}
+  .buy-toast.show{opacity:1;transform:translateY(0)}
+  .buy-toast .who{width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#f9a8b8,#f43f5e)}
+  .scarcity{flex-shrink:0;background:#fff5f5;color:#d43a52;font-size:10.5px;font-weight:600;padding:0 11px;display:flex;align-items:center;gap:6px;height:0;overflow:hidden;transition:.28s}
+  .scarcity.show{height:30px;border-top:1px solid #ffe0e4}
+  .scarcity .bar{flex:1;height:4px;border-radius:3px;background:#ffdfe4;overflow:hidden}
+  .scarcity .bar i{display:block;height:100%;width:18%;background:var(--live);border-radius:3px}
+  .live-buybar{flex-shrink:0;background:#fff;border-top:1px solid #eef0f3;padding:9px 11px;display:flex;align-items:center;gap:9px}
+  .live-buybar .thumb{width:42px;height:42px;border-radius:9px;background:linear-gradient(145deg,#eef1f5,#dbe1ea);flex-shrink:0}
+  .live-buybar .info{flex:1;min-width:0}
+  .live-buybar .pname{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .live-buybar .price{font-size:13.5px;font-weight:750}
+  .live-buybar .price s{font-size:10px;color:#b0b5c0;font-weight:400;margin-right:4px}
+  .live-buybar .disc{color:var(--live);font-weight:700;font-size:10.5px;margin-right:3px}
+  .cta{flex-shrink:0;background:#c9ccd4;color:#fff;border:none;font-weight:700;font-size:12px;padding:10px 13px;border-radius:10px;transition:.18s;font-family:inherit}
+  .cta.strong{background:var(--live);box-shadow:0 4px 14px rgba(244,63,94,.35)}
+  .stage-cap{text-align:center;font-size:11px;color:var(--ink-soft);margin-top:13px}
+  .stage-cap b{color:var(--ink);font-weight:600}
+  .track{margin-top:13px;border-radius:11px;background:var(--paper);border:1px solid var(--line);overflow:hidden;display:none}
+  .track.show{display:block}
+  .track-h{padding:10px 13px;border-bottom:1px solid var(--line);font-size:11px;font-weight:650;display:flex;justify-content:space-between;align-items:center}
+  .track-h .goal{font-size:10px;color:var(--ink-soft);font-weight:500}
+  .track-b{padding:12px 13px}
+  .spark{display:flex;align-items:flex-end;gap:3px;height:40px;margin-bottom:8px}
+  .spark i{flex:1;background:linear-gradient(180deg,#c3ceff,#3b5bdb);border-radius:2px 2px 0 0;opacity:.85}
+  .track-stat{display:flex;justify-content:space-between;align-items:baseline}
+  .track-stat .big{font-size:16px;font-weight:750;color:var(--good)}
+  .track-stat .cap{font-size:10px;color:var(--ink-soft);max-width:58%;text-align:right}
+</style>
+</head>
+<body>
+<div style="position:sticky;top:0;z-index:50;background:rgba(246,247,249,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)">
+  <div style="max-width:1280px;margin:0 auto;padding:0 24px;height:54px;display:flex;align-items:center;justify-content:space-between">
+    <a href="index.html" style="text-decoration:none;color:var(--ink);font-weight:680">DK.Lee</a>
+    <div style="display:flex;gap:20px;font-size:14px">
+      <a href="index.html" style="text-decoration:none;color:var(--ink-soft)">← Case study</a>
+      <a href="framework.html" style="text-decoration:none;color:var(--ink-soft)">Framework</a>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+  <div class="top">
+    <div class="title-block">
+      <h1>Signal → Diagnosis → Prompt → Screen</h1>
+      <div class="steps">
+        <b>Monitor</b><span class="arw">→</span><b>Diagnose cause</b><span class="arw">→</span>
+        <b>Choose direction</b><span class="arw">→</span><b>Prompt</b><span class="arw">→</span><b>Generate</b><span class="arw">→</span><b>Track</b>
+      </div>
+    </div>
+    <div class="badge">Case: <b>Live Commerce · Seller</b></div>
+  </div>
+  <div class="grid">
+    <div class="panel">
+      <div class="panel-h"><h2>Metric monitor</h2><span class="sub">live stream health</span></div>
+      <div class="panel-b" id="metrics"></div>
+    </div>
+    <div class="panel" style="min-height:260px">
+      <div class="panel-h"><h2>Diagnosis → prompt builder</h2><span class="sub" id="diag-sub">watching</span></div>
+      <div id="diag"></div>
+    </div>
+    <div class="stage">
+      <div class="phone-frame"><div class="phone-screen">
+        <div class="live-top"><span class="live-dot">LIVE</span><span class="host">Kitchen Essentials</span><span class="viewers">12,480</span></div>
+        <div class="live-video"><div class="prod-shot">product</div>
+          <div class="pace" id="pace"><span class="pulse"></span><span><b id="pace-n">8</b> bought in the last minute</span></div>
+          <div class="timer" id="timer">Live price · 02:59</div>
+          <div class="buy-toast" id="toast"><span class="who"></span><span><b>Jimin</b> just bought this</span></div>
+        </div>
+        <div class="scarcity" id="scarcity"><span>Only 12 left at this price</span><span class="bar"><i></i></span></div>
+        <div class="live-buybar">
+          <div class="thumb"></div>
+          <div class="info"><div class="pname">Ceramic non-stick frypan 28cm</div>
+            <div class="price"><s>₩49,000</s><span class="disc" id="disc" style="display:none">42%</span>₩28,400</div></div>
+          <button class="cta" id="cta">Buy</button>
+        </div>
+      </div></div>
+      <div class="stage-cap"><b>Seller's live screen</b> — AI-generated from the design system</div>
+      <div class="track" id="track">
+        <div class="track-h"><span>Impact tracking</span><span class="goal" id="track-goal"></span></div>
+        <div class="track-b"><div class="spark" id="spark"></div>
+          <div class="track-stat"><span class="big" id="track-big"></span><span class="cap" id="track-cap"></span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ---------- model ----------
+// each metric lists candidate CAUSES (UX-theory), each cause lists DIRECTIONS (how to express it),
+// each direction maps to concrete screen effects + tokens.
+const METRICS=[
+  {id:"cvr",name:"View → purchase (CVR)",unit:"%",min:0.6,max:2.2,step:0.01,value:1.37,target:1.20,higherIsBetter:true,
+   zone:"Purchase-decision zone (buy bar)",
+   why:"Viewers watch but don't buy. Many possible reasons — pick the ones you believe apply.",
+   success:"View→purchase CVR, buy-button tap rate",lift:"+14% conversion",
+   causes:[
+     {id:"urgency",law:"Sense of Urgency / Scarcity",text:"No reason to buy now rather than later",
+      dirs:[
+        {id:"scarcity",label:"Limited-stock cue",fx:["scarcity"],tok:["banner/scarcity","progress/stock"]},
+        {id:"timer",label:"Live-price countdown",fx:["timer"],tok:["badge/timer","color/live"]},
+        {id:"disc",label:"Discount emphasis (% saved)",fx:["disc"],tok:["badge/discount"]},
+      ]},
+     {id:"social",law:"Social Proof / Conformity",text:"Viewers can't see others buying",
+      dirs:[
+        {id:"toast",label:"Real-time purchase alerts",fx:["toast"],tok:["toast/purchase"]},
+        {id:"pace",label:"Live purchase pace",fx:["pace"],tok:["chip/pace","color/live"]},
+      ]},
+     {id:"cta",law:"Von Restorff / Feedback",text:"The buy action doesn't stand out or confirm",
+      dirs:[
+        {id:"cta",label:"High-emphasis primary button",fx:["cta"],tok:["button/primary","color/live"]},
+      ]},
+   ]},
+  {id:"dropoff",name:"Viewer drop-off",unit:"%",min:55,max:88,step:1,value:70,target:75,higherIsBetter:false,
+   zone:"Early-engagement zone (first 30s)",
+   why:"People leave before they engage. Diagnose why the opening doesn't hold them.",
+   success:"30s retention, average watch time",lift:"-10pp drop-off",
+   causes:[
+     {id:"urgency2",law:"Sense of Urgency / Scarcity",text:"No reason to stay and watch now",
+      dirs:[
+        {id:"scarcity",label:"Limited-stock cue",fx:["scarcity"],tok:["banner/scarcity"]},
+        {id:"timer",label:"Live-price countdown",fx:["timer"],tok:["badge/timer"]},
+      ]},
+     {id:"hook",law:"Von Restorff Effect",text:"The product isn't shown fast or prominently",
+      dirs:[
+        {id:"pace",label:"Live purchase pace (draws attention)",fx:["pace"],tok:["chip/pace"]},
+      ]},
+   ]},
+  {id:"cart",name:"Add-to-cart rate",unit:"%",min:2,max:14,step:0.1,value:8.0,target:6.0,higherIsBetter:true,
+   zone:"Product-exploration zone",
+   why:"Interest isn't turning into intent. Diagnose what's missing at the exploration moment.",
+   success:"Add-to-cart rate, items per order",lift:"+22% add-to-cart",
+   causes:[
+     {id:"choice",law:"Hick's Law / fewer steps",text:"Adding to cart is too many steps",
+      dirs:[{id:"cta",label:"One-tap add on primary button",fx:["cta"],tok:["action/add-to-cart","button/primary"]}]},
+     {id:"social2",law:"Social Proof",text:"Popular items aren't surfaced",
+      dirs:[{id:"toast",label:"Show what others are buying",fx:["toast"],tok:["toast/purchase"]}]},
+   ]},
+];
+
+// selection state
+const S={}; // per metric: {causes:Set, dirs:Set(dirKey "causeId|dirId"), extraCauses:[], extraDirs:{}, stage, tool, built}
+METRICS.forEach(m=>{S[m.id]={causes:new Set(),dirs:new Set(),extraCauses:[],extraDirs:{},tool:"Claude Code",built:false};});
+const appliedFx=new Set();
+
+function fmt(v,s){return s<1?v.toFixed(2):Math.round(v);}
+function isTripped(m){return m.higherIsBetter?(m.value<m.target):(m.value>m.target);}
+function metricById(id){return METRICS.find(m=>m.id===id);}
+
+// metric controls
+const metricsEl=document.getElementById('metrics');
+METRICS.forEach(m=>{
+  const el=document.createElement('div');el.className='metric';el.id='metric-'+m.id;
+  el.innerHTML=`<div class="metric-top"><span class="metric-name">${m.name}</span>
+    <span><span class="metric-val" id="val-${m.id}"></span><span class="metric-state" id="state-${m.id}"></span></span></div>
+    <input type="range" id="rng-${m.id}" min="${m.min}" max="${m.max}" step="${m.step}" value="${m.value}">
+    <div class="metric-target" id="tgt-${m.id}"></div>`;
+  metricsEl.appendChild(el);
+  el.querySelector('#rng-'+m.id).addEventListener('input',e=>{m.value=parseFloat(e.target.value);update();});
+});
+const hint=document.createElement('div');hint.className='hint';
+hint.textContent='Targets come from the stream\u2019s baseline. Drag one past target, then diagnose the cause.';
+metricsEl.appendChild(hint);
+
+// selected directions for a metric (including chosen causes only)
+function selectedDirs(m){
+  const out=[];
+  m.causes.forEach(c=>{
+    if(!S[m.id].causes.has(c.id))return;
+    c.dirs.forEach(d=>{ if(S[m.id].dirs.has(c.id+'|'+d.id)) out.push({c,d}); });
+  });
+  return out;
+}
+function buildPrompt(m){
+  const st=S[m.id];
+  const chosenCauses=[...m.causes.filter(c=>st.causes.has(c.id)).map(c=>c.law),...st.extraCauses];
+  const dirs=selectedDirs(m).map(x=>x.d.label.toLowerCase());
+  const extraD=Object.values(st.extraDirs).flat();
+  const allDirs=[...dirs,...extraD];
+  const toks=[...new Set(selectedDirs(m).flatMap(x=>x.d.tok))];
+  const causeText=chosenCauses.length?chosenCauses.join("; "):"(choose a cause)";
+  const dirText=allDirs.length?allDirs.join(", "):"(choose a direction)";
+  const tokText=toks.length?toks.join(", "):"design-system tokens";
+  return `<span class="k">Goal:</span> Improve <span class="s">${m.name} (${m.higherIsBetter?'below':'above'} ${fmt(m.target,m.step)}${m.unit} target)</span> on a live-commerce seller stream.
+<span class="k">Zone:</span> ${m.zone}.
+<span class="k">Diagnosed cause:</span> ${causeText}.
+<span class="k">Design direction:</span> ${dirText}.
+<span class="k">Use system tokens:</span> ${tokText}.
+<span class="k">Consistency:</span> reuse live-UI spacing & type tokens; keep one primary action; non-blocking.
+<span class="k">Measure:</span> ${m.success}.
+<span class="k">Output for:</span> ${st.tool}.`;
+}
+
+function renderDiagnosis(){
+  const diag=document.getElementById('diag');
+  const tripped=METRICS.filter(isTripped);
+  document.getElementById('diag-sub').textContent=tripped.length?`${tripped.length} signal${tripped.length>1?'s':''} tripped`:'watching';
+  if(!tripped.length){
+    diag.innerHTML=`<div class="diag-empty">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>
+      <p>All metrics on target. Drop one below its baseline, then diagnose the UX cause and choose a design direction.</p></div>`;
+    return;
+  }
+  diag.innerHTML='';
+
+  // ---- selection summary (shows when 2+ signals tripped) ----
+  if(tripped.length>=2){
+    const sumEl=document.createElement('div');sumEl.className='summary';
+    const rows=tripped.map(m=>{
+      const st=S[m.id];
+      const causes=[...m.causes.filter(c=>st.causes.has(c.id)).map(c=>c.law),...st.extraCauses];
+      const dirs=[...selectedDirs(m).map(x=>x.d.label),...Object.values(st.extraDirs).flat()];
+      const causeHtml=causes.length?causes.map(c=>`<span class="sum-tag">${c}</span>`).join(''):'<span class="sum-none">not diagnosed</span>';
+      const dirHtml=dirs.length?dirs.map(d=>`<b>${d}</b>`).join(', '):'<span class="sum-none">no direction</span>';
+      const ready=st.built;
+      return `<div class="sum-row">
+        <span class="sum-metric"><span class="dot"></span>${m.name}</span>
+        <span class="sum-arrow">→</span>
+        <span class="sum-part">${causeHtml}</span>
+        <span class="sum-arrow">→</span>
+        <span class="sum-part">${dirHtml}</span>
+        <span class="sum-ready ${ready?'ok':'wait'}">${ready?'prompt ready':'in progress'}</span>
+      </div>`;
+    }).join('');
+    sumEl.innerHTML=`<div class="summary-h">Working set <span class="cnt">${tripped.length} signals</span></div>${rows}`;
+    diag.appendChild(sumEl);
+  }
+
+  tripped.forEach(m=>{
+    const st=S[m.id];
+    const sec=document.createElement('div');sec.className='analysis';
+    const hasCause = st.causes.size>0 || st.extraCauses.length>0;
+    const hasDir = selectedDirs(m).length>0 || Object.values(st.extraDirs).some(a=>a.length);
+
+    // STAGE 1 — cause
+    const causeOpts=m.causes.map(c=>{
+      const on=st.causes.has(c.id);
+      return `<div class="opt ${on?'on':''}" data-cause="${m.id}|${c.id}">
+        <span class="box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <div class="opt-main"><div class="opt-title"><span class="law">${c.law}</span></div>
+        <div class="opt-desc">${c.text}</div></div></div>`;
+    }).join("");
+    const extraCauseChips=st.extraCauses.map((t,i)=>`<div class="opt on" data-xcause="${m.id}|${i}">
+      <span class="box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+      <div class="opt-main"><div class="opt-title">${t}</div><div class="opt-desc">your added cause</div></div></div>`).join("");
+
+    // STAGE 2 — direction (only for chosen causes)
+    let dirBlocks="";
+    m.causes.forEach(c=>{
+      if(!st.causes.has(c.id))return;
+      const dirs=c.dirs.map(d=>{
+        const key=c.id+'|'+d.id;const on=st.dirs.has(key);
+        return `<div class="opt ${on?'on':''}" data-dir="${m.id}|${key}">
+          <span class="box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg></span>
+          <div class="opt-main"><div class="opt-title">${d.label}</div></div></div>`;
+      }).join("");
+      const xd=(st.extraDirs[c.id]||[]).map(t=>`<div class="opt on"><span class="box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg></span><div class="opt-main"><div class="opt-title">${t}</div><div class="opt-desc">your idea</div></div></div>`).join("");
+      dirBlocks+=`<div class="add-lbl">For “${c.law}”, how to express it:</div>${dirs}${xd}
+        <div class="add-row"><input placeholder="add your own direction…" data-xdir-in="${m.id}|${c.id}"><button data-xdir="${m.id}|${c.id}">Add</button></div>`;
+    });
+
+    sec.innerHTML=`
+      <div class="an-k">Signal · ${m.name}</div>
+      <div class="an-zone">${m.zone}</div>
+      <div class="an-why">${m.why}</div>
+
+      <div class="stg">
+        <div class="stg-h"><span class="stg-n">1</span><span class="stg-t">Diagnose the cause</span><span class="stg-sub">UX principle · pick any</span></div>
+        <div class="stg-b">
+          ${causeOpts}${extraCauseChips}
+          <div class="add-row"><input placeholder="add another cause…" data-xcause-in="${m.id}"><button data-xcausebtn="${m.id}">Add</button></div>
+        </div>
+      </div>
+
+      <div class="stg ${hasCause?'':'locked'}">
+        <div class="stg-h"><span class="stg-n">2</span><span class="stg-t">Choose the design direction</span><span class="stg-sub">how to express it</span></div>
+        <div class="stg-b">${hasCause?dirBlocks:'<div style="font-size:11.5px;color:var(--ink-soft)">Pick a cause first.</div>'}</div>
+      </div>
+
+      <div class="stg ${hasDir?'':'locked'}">
+        <div class="stg-h"><span class="stg-n">3</span><span class="stg-t">Build the prompt</span><span class="stg-sub">cause + direction + tokens</span></div>
+        <div class="stg-b">
+          <button class="btn btn-primary btn-block" data-gen="${m.id}" ${hasDir?'':'disabled'}>Build prompt from diagnosis</button>
+          <div class="prompt-wrap" id="pw-${m.id}" style="${st.built?'':'display:none'};margin-top:11px">
+            <div class="prompt-head">
+              <span class="lbl">AI prompt
+                <span class="tool-pills">${["Claude Code","Figma Make","Cursor"].map(t=>`<button class="tool-pill ${st.tool===t?'on':''}" data-tool="${m.id}|${t}">${t}</button>`).join("")}</span>
+              </span>
+              <button class="copy-btn" data-copy="${m.id}">Copy</button>
+            </div>
+            <div class="prompt-code" id="code-${m.id}">${buildPrompt(m)}</div>
+            <div class="prompt-foot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0ea472" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Cause + direction + system tokens — so the generated screen is on-purpose and consistent.</div>
+            <div class="apply-row"><button class="btn btn-primary btn-block" data-apply="${m.id}">Generate &amp; apply to screen</button></div>
+          </div>
+        </div>
+      </div>`;
+    diag.appendChild(sec);
+  });
+  wire(diag);
+}
+
+function wire(diag){
+  diag.querySelectorAll('[data-cause]').forEach(el=>el.addEventListener('click',()=>{
+    const[mid,cid]=el.dataset.cause.split('|');const st=S[mid];
+    if(st.causes.has(cid)){st.causes.delete(cid);
+      // clear its dirs
+      [...st.dirs].forEach(k=>{if(k.startsWith(cid+'|'))st.dirs.delete(k);});
+      delete st.extraDirs[cid];
+    } else st.causes.add(cid);
+    st.built=false;renderDiagnosis();
+  }));
+  diag.querySelectorAll('[data-dir]').forEach(el=>el.addEventListener('click',()=>{
+    const raw=el.dataset.dir;const mid=raw.split('|')[0];const key=raw.substring(mid.length+1);
+    const st=S[mid];if(st.dirs.has(key))st.dirs.delete(key);else st.dirs.add(key);
+    st.built=false;renderDiagnosis();
+  }));
+  diag.querySelectorAll('[data-xcausebtn]').forEach(b=>b.addEventListener('click',()=>{
+    const mid=b.dataset.xcausebtn;const inp=diag.querySelector(`[data-xcause-in="${mid}"]`);
+    if(inp.value.trim()){S[mid].extraCauses.push(inp.value.trim());inp.value='';renderDiagnosis();}
+  }));
+  diag.querySelectorAll('[data-xdir]').forEach(b=>b.addEventListener('click',()=>{
+    const[mid,cid]=b.dataset.xdir.split('|');const inp=diag.querySelector(`[data-xdir-in="${mid}|${cid}"]`);
+    if(inp.value.trim()){(S[mid].extraDirs[cid]=S[mid].extraDirs[cid]||[]).push(inp.value.trim());S[mid].built=false;renderDiagnosis();}
+  }));
+  diag.querySelectorAll('[data-gen]').forEach(b=>b.addEventListener('click',()=>{S[b.dataset.gen].built=true;renderDiagnosis();}));
+  diag.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{
+    const[mid,tool]=b.dataset.tool.split('|');S[mid].tool=tool;
+    document.getElementById('code-'+mid).innerHTML=buildPrompt(metricById(mid));
+    diag.querySelectorAll(`[data-tool^="${mid}|"]`).forEach(x=>x.classList.toggle('on',x.dataset.tool===mid+'|'+tool));
+  }));
+  diag.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+    const mid=b.dataset.copy;const txt=document.getElementById('code-'+mid).innerText;
+    if(navigator.clipboard)navigator.clipboard.writeText(txt);b.textContent='Copied';setTimeout(()=>b.textContent='Copy',1200);
+  }));
+  diag.querySelectorAll('[data-apply]').forEach(b=>b.addEventListener('click',()=>{
+    const m=metricById(b.dataset.apply);
+    selectedDirs(m).forEach(x=>x.d.fx.forEach(f=>appliedFx.add(f)));
+    applyScreen();showTrack(m);
+  }));
+}
+
+function update(){
+  METRICS.forEach(m=>{
+    document.getElementById('val-'+m.id).innerHTML=fmt(m.value,m.step)+`<span class="unit">${m.unit}</span>`;
+    const stt=document.getElementById('state-'+m.id),tgt=document.getElementById('tgt-'+m.id),mEl=document.getElementById('metric-'+m.id);
+    tgt.textContent=`${m.higherIsBetter?'target ≥':'target ≤'} ${fmt(m.target,m.step)}${m.unit} · ${m.zone}`;
+    if(isTripped(m)){stt.textContent='below target';stt.className='metric-state s-warn';mEl.classList.add('tripped');}
+    else{stt.textContent='on target';stt.className='metric-state s-good';mEl.classList.remove('tripped');}
+  });
+  renderDiagnosis();
+}
+function applyScreen(){
+  const cta=document.getElementById('cta');
+  cta.classList.toggle('strong',appliedFx.has('cta'));cta.textContent=appliedFx.has('cta')?'Buy now':'Buy';
+  document.getElementById('disc').style.display=appliedFx.has('disc')?'inline':'none';
+  document.getElementById('scarcity').classList.toggle('show',appliedFx.has('scarcity'));
+  document.getElementById('timer').classList.toggle('show',appliedFx.has('timer'));
+  document.getElementById('pace').classList.toggle('show',appliedFx.has('pace'));
+  toggleToast(appliedFx.has('toast'));
+  if(appliedFx.has('timer'))startTimer();
+}
+let toastTimer=null,timerInt=null;
+function toggleToast(on){const t=document.getElementById('toast');
+  if(on){const names=['Jimin','Soo-a','Mika','Dan','Yuna','Chris'];let i=0;clearInterval(toastTimer);
+    const cyc=()=>{t.querySelector('b').textContent=names[i%names.length];i++;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);};
+    cyc();toastTimer=setInterval(cyc,3400);}else{clearInterval(toastTimer);t.classList.remove('show');}}
+function startTimer(){let s=179;clearInterval(timerInt);const el=document.getElementById('timer');
+  const tick=()=>{const mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');el.textContent=`Live price · ${mm}:${ss}`;s=s>0?s-1:179;};
+  tick();timerInt=setInterval(tick,1000);}
+function showTrack(m){
+  const tr=document.getElementById('track');tr.classList.add('show');
+  document.getElementById('track-goal').textContent='goal: '+m.success.split(',')[0];
+  const spark=document.getElementById('spark');spark.innerHTML='';
+  [38,41,39,44,43,47,52,58,63,70].forEach(h=>{const i=document.createElement('i');i.style.height=h+'%';spark.appendChild(i);});
+  document.getElementById('track-big').textContent=m.lift;
+  document.getElementById('track-cap').textContent='measured after ship · pattern promoted if it holds';
+}
+update();
+</script>
+</body>
+</html>

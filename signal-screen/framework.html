@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Framework · Signal → Screen · DK Lee</title>
+<style>
+  :root{
+    --ink:#14161c;--ink-soft:#565c6b;--ink-faint:#8b91a0;--line:#e7e9ef;--line-soft:#f0f1f5;
+    --paper:#fff;--bg:#f7f8fa;--band:#0f1320;
+    --accent:#3b5bdb;--accent-soft:#eef2ff;--live:#f43f5e;--good:#0ea472;--warn:#e8843c;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,248,250,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .in{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px}
+  nav a{text-decoration:none;color:var(--ink-soft);font-size:14px}
+  nav a:hover{color:var(--ink)}
+  nav .brand{font-weight:680;color:var(--ink)}
+  .wrap{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+  .head{margin-bottom:8px}
+  .kicker{font-size:13px;font-weight:650;color:var(--accent);margin-bottom:10px}
+  h1{font-size:clamp(26px,4vw,36px);letter-spacing:-.025em;font-weight:680;margin-bottom:14px}
+  .lede{font-size:17px;color:var(--ink-soft);max-width:64ch;margin-bottom:8px}
+  .instr{font-size:13.5px;color:var(--ink-faint);margin-bottom:28px;display:flex;align-items:center;gap:7px}
+  .instr svg{flex-shrink:0}
+
+  /* signal selector */
+  .signals{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+  .sig{border:1px solid var(--line);background:var(--paper);border-radius:11px;padding:13px 16px;cursor:pointer;transition:.15s;min-width:180px}
+  .sig:hover{border-color:#c3ceff}
+  .sig.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 4px 14px rgba(59,91,219,.12)}
+  .sig .st{font-size:11px;color:var(--ink-faint);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+  .sig .st .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
+  .sig .sn{font-size:15px;font-weight:640}
+  .sig .sz{font-size:11.5px;color:var(--ink-soft);margin-top:3px}
+
+  /* trace flow */
+  .trace{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+  @media(max-width:860px){.trace{grid-template-columns:1fr}}
+  .lane{background:var(--paper);border:1px solid var(--line);border-radius:15px;overflow:hidden}
+  .lane-h{padding:13px 16px;border-bottom:1px solid var(--line);background:#fafbfc;display:flex;align-items:center;gap:9px}
+  .lane-h .ln{width:20px;height:20px;border-radius:6px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center}
+  .lane-h .lt{font-size:12.5px;font-weight:650}
+  .lane-h .lsub{font-size:10.5px;color:var(--ink-faint);margin-left:auto}
+  .lane-b{padding:14px 16px}
+
+  .cause{border:1px solid var(--line);border-radius:10px;padding:12px 13px;margin-bottom:10px;cursor:pointer;transition:.14s}
+  .cause:last-child{margin-bottom:0}
+  .cause:hover{border-color:#c3ceff}
+  .cause.on{border-color:var(--accent);background:var(--accent-soft)}
+  .cause .law{font-size:13px;font-weight:640;color:var(--accent)}
+  .cause .cd{font-size:12px;color:var(--ink-soft);margin-top:3px}
+
+  .dir-empty,.tok-empty{font-size:12.5px;color:var(--ink-faint);padding:6px 0}
+  .dir{border:1px solid var(--line-soft);background:#fbfcfe;border-radius:9px;padding:10px 12px;margin-bottom:9px}
+  .dir:last-child{margin-bottom:0}
+  .dir .dl{font-size:12.5px;font-weight:600}
+  .dir .dtok{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+  .tok{font-family:var(--mono);font-size:10.5px;color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:5px}
+  .grp-law{font-size:10.5px;font-weight:700;color:var(--ink-faint);letter-spacing:.03em;margin:12px 0 7px}
+  .grp-law:first-child{margin-top:0}
+
+  .legend{margin-top:30px;padding:18px 20px;background:var(--paper);border:1px solid var(--line);border-radius:13px;font-size:13px;color:var(--ink-soft)}
+  .legend b{color:var(--ink)}
+  .legend .row{display:flex;gap:26px;flex-wrap:wrap;margin-top:12px}
+  .legend .row div{display:flex;gap:8px;align-items:flex-start;max-width:30ch}
+  .legend .row .num{width:19px;height:19px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:11px;display:grid;place-items:center;flex-shrink:0}
+
+  footer{padding:26px 0;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--line);text-align:center}
+</style>
+</head>
+<body>
+<nav><div class="in">
+  <a href="index.html" class="brand">DK.Lee</a>
+  <div style="display:flex;gap:20px">
+    <a href="index.html">← Case study</a>
+    <a href="prototype.html">Prototype →</a>
+  </div>
+</div></nav>
+
+<div class="wrap">
+  <div class="head">
+    <div class="kicker">The framework · interactive</div>
+    <h1>Trace a signal to its screen.</h1>
+    <p class="lede">This is the map the system runs on: each business signal points to a screen zone, a set of UX-theory causes, and the design-system patterns that answer them. Pick a signal to trace the path.</p>
+    <div class="instr">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+      Select a signal, then a cause, to see how judgement narrows into concrete, token-scoped patterns.
+    </div>
+  </div>
+
+  <div class="signals" id="signals"></div>
+
+  <div class="trace">
+    <div class="lane">
+      <div class="lane-h"><span class="ln">1</span><span class="lt">Candidate causes</span><span class="lsub">UX theory</span></div>
+      <div class="lane-b" id="lane-causes"></div>
+    </div>
+    <div class="lane">
+      <div class="lane-h"><span class="ln">2</span><span class="lt">Design directions</span><span class="lsub">how to express</span></div>
+      <div class="lane-b" id="lane-dirs"><div class="dir-empty">Select a cause to see directions.</div></div>
+    </div>
+    <div class="lane">
+      <div class="lane-h"><span class="ln">3</span><span class="lt">System tokens</span><span class="lsub">consistency</span></div>
+      <div class="lane-b" id="lane-tokens"><div class="tok-empty">Directions resolve to named design-system tokens.</div></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <b>How to read this.</b> The framework encodes the part of design work that usually stays tacit: the reasoning from a number to a screen.
+    <div class="row">
+      <div><span class="num">1</span><span><b>Cause</b> — why the metric might have moved, drawn from UX principles. The designer decides which apply.</span></div>
+      <div><span class="num">2</span><span><b>Direction</b> — how to express the chosen cause on screen. Several options; the designer can add their own.</span></div>
+      <div><span class="num">3</span><span><b>Tokens</b> — the named design-system pieces each direction uses, so any generated screen stays consistent.</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>© 2026 DK Lee · dkmakes.com · <a href="index.html" style="color:var(--accent);text-decoration:none">Back to case study</a></footer>
+
+<script>
+const DATA=[
+  {id:"cvr",name:"View → purchase (CVR)",zone:"Purchase-decision zone (buy bar)",
+   causes:[
+     {law:"Sense of Urgency / Scarcity",desc:"No reason to buy now rather than later",
+      dirs:[{l:"Limited-stock cue",t:["banner/scarcity","progress/stock"]},{l:"Live-price countdown",t:["badge/timer","color/live"]},{l:"Discount emphasis (% saved)",t:["badge/discount"]}]},
+     {law:"Social Proof / Conformity",desc:"Viewers can't see others buying",
+      dirs:[{l:"Real-time purchase alerts",t:["toast/purchase"]},{l:"Live purchase pace",t:["chip/pace","color/live"]}]},
+     {law:"Von Restorff / Feedback",desc:"The buy action doesn't stand out or confirm",
+      dirs:[{l:"High-emphasis primary button",t:["button/primary","color/live"]}]},
+   ]},
+  {id:"dropoff",name:"Viewer drop-off",zone:"Early-engagement zone (first 30s)",
+   causes:[
+     {law:"Sense of Urgency / Scarcity",desc:"No reason to stay and watch now",
+      dirs:[{l:"Limited-stock cue",t:["banner/scarcity"]},{l:"Live-price countdown",t:["badge/timer"]}]},
+     {law:"Von Restorff Effect",desc:"The product isn't shown fast or prominently",
+      dirs:[{l:"Live purchase pace (draws the eye)",t:["chip/pace"]}]},
+   ]},
+  {id:"cart",name:"Add-to-cart rate",zone:"Product-exploration zone",
+   causes:[
+     {law:"Hick's Law / fewer steps",desc:"Adding to cart is too many steps",
+      dirs:[{l:"One-tap add on primary button",t:["action/add-to-cart","button/primary"]}]},
+     {law:"Social Proof",desc:"Popular items aren't surfaced",
+      dirs:[{l:"Show what others are buying",t:["toast/purchase","card/mini"]}]},
+   ]},
+];
+let selSig=0, selCause=0;
+const sigEl=document.getElementById('signals');
+function renderSignals(){
+  sigEl.innerHTML=DATA.map((d,i)=>`<div class="sig ${i===selSig?'on':''}" data-i="${i}">
+    <div class="st"><span class="dot"></span>signal</div>
+    <div class="sn">${d.name}</div><div class="sz">${d.zone}</div></div>`).join('');
+  sigEl.querySelectorAll('.sig').forEach(el=>el.addEventListener('click',()=>{selSig=+el.dataset.i;selCause=0;renderAll();}));
+}
+function renderAll(){
+  renderSignals();
+  const d=DATA[selSig];
+  document.getElementById('lane-causes').innerHTML=d.causes.map((c,i)=>`<div class="cause ${i===selCause?'on':''}" data-i="${i}">
+    <div class="law">${c.law}</div><div class="cd">${c.desc}</div></div>`).join('');
+  document.getElementById('lane-causes').querySelectorAll('.cause').forEach(el=>el.addEventListener('click',()=>{selCause=+el.dataset.i;renderAll();}));
+  const c=d.causes[selCause];
+  document.getElementById('lane-dirs').innerHTML=c.dirs.map(x=>`<div class="dir"><div class="dl">${x.l}</div>
+    <div class="dtok">${x.t.map(t=>`<span class="tok">${t}</span>`).join('')}</div></div>`).join('');
+  const allToks=[...new Set(c.dirs.flatMap(x=>x.t))];
+  document.getElementById('lane-tokens').innerHTML=`<div class="grp-law">Tokens for “${c.law}”</div>`+
+    allToks.map(t=>`<div class="dir" style="display:flex;align-items:center;gap:8px"><span class="tok">${t}</span></div>`).join('');
+}
+renderAll();
+</script>
+</body>
+</html>
