@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="meta-description" content="A designer's operating system for the AI era: read the business signal, diagnose the UX cause, and turn it into a design-system-scoped prompt an AI tool can build consistently.">
+<title>Signal → Screen · A design system that reads its own metrics · DK Lee</title>
+<style>
+  :root{
+    --ink:#14161c;--ink-soft:#565c6b;--ink-faint:#8b91a0;--line:#e7e9ef;--line-soft:#f0f1f5;
+    --paper:#ffffff;--bg:#f7f8fa;--band:#0f1320;
+    --accent:#3b5bdb;--accent-soft:#eef2ff;--live:#f43f5e;--good:#0ea472;--warn:#e8843c;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;font-size:16px}
+  .col{max-width:760px;margin:0 auto;padding:0 24px}
+  .wide{max-width:1060px;margin:0 auto;padding:0 24px}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,248,250,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav .col{display:flex;align-items:center;justify-content:space-between;height:56px}
+  nav a{text-decoration:none;color:var(--ink)}
+  nav .brand{font-weight:680;letter-spacing:-.01em}
+  nav .links{display:flex;gap:20px;font-size:14px}
+  nav .links a{color:var(--ink-soft)}
+  nav .links a:hover{color:var(--ink)}
+
+  /* hero */
+  header{padding:70px 0 44px}
+  .eyebrow{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:18px;display:flex;align-items:center;gap:9px}
+  .eyebrow .tag{background:var(--accent-soft);border-radius:6px;padding:2px 8px;font-size:11.5px}
+  h1.hero{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-.03em;font-weight:680;margin-bottom:22px}
+  .lede{font-size:19px;color:var(--ink-soft);max-width:60ch}
+  .meta{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:26px;border-top:1px solid var(--line)}
+  .meta div{font-size:14px}
+  .meta .k{color:var(--ink-faint);font-size:12px;margin-bottom:3px}
+  .meta .v{font-weight:600}
+
+  /* honesty note */
+  .note{background:#fffbf3;border:1px solid #f4e3c4;border-radius:12px;padding:15px 18px;margin:34px auto 0;font-size:14px;color:#8a6d3b;display:flex;gap:11px;align-items:flex-start;max-width:760px}
+  .note svg{flex-shrink:0;margin-top:2px}
+
+  section{padding:46px 0}
+  .kicker{font-size:13px;font-weight:650;color:var(--accent);margin-bottom:12px}
+  h2{font-size:clamp(23px,3.4vw,30px);line-height:1.16;letter-spacing:-.02em;font-weight:670;margin-bottom:18px}
+  h3{font-size:18px;font-weight:640;margin:0 0 7px}
+  p{margin-bottom:16px}
+  p:last-child{margin-bottom:0}
+  .col p, .col h2, .col h3{max-width:68ch}
+  strong{font-weight:660}
+  a.inline{color:var(--accent);text-decoration:none;border-bottom:1px solid #c3ceff}
+  a.inline:hover{border-color:var(--accent)}
+
+  /* problem cards */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px}
+  @media(max-width:760px){.cards{grid-template-columns:1fr}}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:20px}
+  .card .n{font-family:var(--mono);font-size:12px;color:var(--ink-faint);margin-bottom:10px}
+  .card p{font-size:14px;color:var(--ink-soft);margin:0}
+
+  /* loop diagram */
+  .loop{background:var(--band);border-radius:18px;padding:34px 30px;margin-top:30px;color:#dfe3ee}
+  .loop-h{font-size:13px;color:#8b93a8;margin-bottom:24px;font-weight:600}
+  .loop-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  @media(max-width:760px){.loop-steps{grid-template-columns:1fr 1fr;gap:14px}}
+  .lstep{position:relative}
+  .lstep .ln{width:26px;height:26px;border-radius:8px;background:rgba(59,91,219,.22);color:#9db4ff;
+    display:grid;place-items:center;font-weight:700;font-size:13px;margin-bottom:11px}
+  .lstep .lt{font-size:14px;font-weight:640;color:#fff;margin-bottom:5px}
+  .lstep .ld{font-size:12.5px;color:#949cb0;line-height:1.5}
+  .loop-foot{margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.09);font-size:13px;color:#949cb0;display:flex;align-items:center;gap:9px}
+  .loop-foot b{color:#c3ceff;font-weight:600}
+
+  /* mapping table */
+  .maptable{margin-top:26px;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:var(--paper)}
+  .maptable .thead,.maptable .trow{display:grid;grid-template-columns:1.1fr 1fr 1.3fr 1fr}
+  @media(max-width:760px){.maptable{overflow-x:auto}.maptable .thead,.maptable .trow{grid-template-columns:150px 150px 190px 150px;min-width:640px}}
+  .maptable .thead{background:#fafbfc;border-bottom:1px solid var(--line)}
+  .maptable .th{padding:11px 14px;font-size:11.5px;font-weight:650;color:var(--ink-soft);letter-spacing:.02em}
+  .maptable .trow{border-bottom:1px solid var(--line-soft)}
+  .maptable .trow:last-child{border-bottom:0}
+  .maptable .td{padding:13px 14px;font-size:13px;border-right:1px solid var(--line-soft)}
+  .maptable .td:last-child{border-right:0}
+  .maptable .td .metric{font-weight:640}
+  .maptable .law{color:var(--accent);font-weight:600;font-size:12.5px}
+  .maptable .tok{font-family:var(--mono);font-size:11px;color:var(--ink-soft);background:var(--line-soft);padding:1px 5px;border-radius:4px;display:inline-block;margin:1px}
+
+  /* embed cards (framework + prototype) */
+  .embeds{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+  @media(max-width:760px){.embeds{grid-template-columns:1fr}}
+  .embed{border:1px solid var(--line);border-radius:15px;overflow:hidden;background:var(--paper);text-decoration:none;color:inherit;display:block;transition:.16s}
+  .embed:hover{border-color:#c3ceff;box-shadow:0 10px 30px rgba(20,22,28,.07);transform:translateY(-2px)}
+  .embed .shot{height:172px;background:var(--band);position:relative;overflow:hidden;display:grid;place-items:center}
+  .embed .shot .mini{transform:scale(.9)}
+  .embed .body{padding:17px 18px}
+  .embed .etag{font-size:11px;font-weight:650;color:var(--accent);margin-bottom:6px;letter-spacing:.02em}
+  .embed h3{margin-bottom:5px}
+  .embed p{font-size:13.5px;color:var(--ink-soft);margin:0}
+  .embed .go{margin-top:12px;font-size:13px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
+
+  /* prompt sample */
+  .promptbox{background:#0f1117;border-radius:13px;padding:18px 19px;margin-top:24px;
+    font-family:var(--mono);font-size:12.5px;line-height:1.7;color:#e7eaf3;white-space:pre-wrap}
+  .promptbox .k{color:#89b4ff}.promptbox .s{color:#9ae6b4}
+
+  /* principles */
+  .principles{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+  @media(max-width:760px){.principles{grid-template-columns:1fr}}
+  .principle{border-left:2px solid var(--accent);padding:3px 0 3px 16px}
+  .principle h3{font-size:15px;margin-bottom:4px}
+  .principle p{font-size:13.5px;color:var(--ink-soft);margin:0}
+
+  /* outcome / close */
+  .close{background:var(--paper);border-top:1px solid var(--line);padding:52px 0 64px;margin-top:20px}
+  .close .lede{max-width:64ch}
+  .backrow{margin-top:34px;display:flex;gap:18px;font-size:14px}
+  .backrow a{color:var(--accent);text-decoration:none;font-weight:600}
+
+  footer{padding:30px 0;color:var(--ink-faint);font-size:13px;border-top:1px solid var(--line)}
+
+  .pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .pill{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink-soft);background:var(--paper)}
+
+  /* AARRR ecosystem */
+  .aarrr{margin-top:30px;display:flex;flex-direction:column;gap:14px}
+  .stage-row{background:var(--paper);border:1px solid var(--line);border-radius:14px;overflow:hidden;transition:.15s}
+  .stage-row:hover{border-color:#c3ceff;box-shadow:0 6px 20px rgba(20,22,28,.05)}
+  .stage-grid{display:grid;grid-template-columns:158px 1fr 1fr 1.15fr;align-items:stretch}
+  @media(max-width:860px){.stage-grid{grid-template-columns:1fr}}
+  .stage-cell{padding:16px 17px;border-right:1px solid var(--line-soft)}
+  .stage-cell:last-child{border-right:0}
+  @media(max-width:860px){.stage-cell{border-right:0;border-bottom:1px solid var(--line-soft)}}
+  .stage-id{display:flex;flex-direction:column;gap:6px;background:#fafbfe;justify-content:center}
+  .stage-letter{width:30px;height:30px;border-radius:9px;color:#fff;font-weight:750;font-size:15px;display:grid;place-items:center}
+  .stage-name{font-size:14px;font-weight:660}
+  .stage-name .ko{font-size:11.5px;color:var(--ink-faint);font-weight:500;margin-left:4px}
+  .stage-q{font-size:11.5px;color:var(--ink-faint);line-height:1.4}
+  .cell-lbl{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:9px}
+  .data-chip{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;margin-bottom:10px}
+  .data-chip:last-child{margin-bottom:0}
+  .data-chip .spark{display:flex;align-items:flex-end;gap:1.5px;height:15px;width:26px;flex-shrink:0;margin-top:2px}
+  .data-chip .spark i{flex:1;border-radius:1px}
+  .data-chip .dtext{min-width:0}
+  .data-chip .dm{font-weight:600}
+  .data-chip .dd{font-size:11px;color:var(--ink-faint);line-height:1.35}
+  .ux-tag{display:inline-block;font-size:11.5px;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 8px;margin:0 3px 5px 0}
+  .ux-focus{font-size:11px;color:var(--ink-soft);margin-top:8px;line-height:1.5;padding-top:8px;border-top:1px dashed var(--line)}
+  .comp{display:flex;flex-direction:column;gap:7px}
+  .comp-item{border:1px solid var(--line);border-radius:8px;padding:7px 9px;display:flex;align-items:center;gap:8px;font-size:11px}
+  .comp-tok{font-family:var(--mono);font-size:10px;color:var(--ink-soft);margin-left:auto}
+  .flow-arrows{display:flex;justify-content:center;gap:44px;padding:2px 0 6px;font-size:10.5px;color:var(--ink-faint);letter-spacing:.03em}
+  @media(max-width:860px){.flow-arrows{display:none}}
+  .flow-arrows span{position:relative}
+
+  /* design system showcase */
+  .ds-show{margin-top:30px;background:var(--band);border-radius:18px;padding:30px;color:#dfe3ee}
+  .ds-h{font-size:13px;color:#8b93a8;font-weight:600;margin-bottom:6px}
+  .ds-title{font-size:19px;font-weight:640;color:#fff;margin-bottom:6px;letter-spacing:-.01em}
+  .ds-intro{font-size:13px;color:#949cb0;margin-bottom:22px;max-width:64ch}
+  .ds-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  @media(max-width:760px){.ds-grid{grid-template-columns:1fr}}
+  .ds-card{background:#161b2a;border:1px solid #232a3d;border-radius:12px;padding:16px}
+  .ds-card.wide{grid-column:span 2}
+  @media(max-width:760px){.ds-card.wide{grid-column:span 1}}
+  .ds-card .dct{font-size:12px;font-weight:640;color:#c3ceff;margin-bottom:13px;font-family:var(--mono)}
+  .ds-swatches{display:flex;gap:7px;margin-bottom:8px}
+  .ds-sw{flex:1;height:38px;border-radius:7px;display:flex;flex-direction:column;justify-content:flex-end;padding:4px 6px}
+  .ds-sw span{font-family:var(--mono);font-size:8px;line-height:1.3}
+  .ds-scale{display:flex;gap:4px;margin-top:10px}
+  .ds-scale i{flex:1;height:10px;border-radius:2px}
+  .ds-scale-lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:#6b7284;margin-top:4px}
+  /* button states row */
+  .btn-states{display:flex;gap:12px;flex-wrap:wrap}
+  .btn-state{text-align:center}
+  .btn-state .demo-btn{width:100%;margin-bottom:7px}
+  .btn-state .bs-cap{font-family:var(--mono);font-size:9px;color:#7b8296;line-height:1.5}
+  .btn-state .bs-cap b{color:#aeb6c8;font-weight:600}
+  .demo-btn{border:none;font-family:inherit;font-weight:700;font-size:12.5px;padding:11px 16px;border-radius:9px;color:#fff}
+  .demo-badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;color:#fff;display:inline-block}
+  .demo-toast{background:rgba(20,21,25,.9);color:#fff;font-size:10.5px;padding:7px 11px;border-radius:8px;display:inline-flex;align-items:center;gap:7px;border:1px solid #2a3145}
+  .demo-toast .d{width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#f9a8b8,#f43f5e)}
+  .comp-demos{display:flex;flex-direction:column;gap:11px;align-items:flex-start}
+  .ds-type{font-family:var(--mono);font-size:10.5px;color:#7b8296;line-height:2}
+  .ds-type b{color:#dfe3ee;font-family:inherit}
+  .ds-mini-kit{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .kit-item{background:#0f1320;border:1px solid #232a3d;border-radius:8px;padding:9px;font-size:10px;color:#949cb0}
+  .kit-item .ki-top{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+  .kit-item .ki-sw{width:12px;height:12px;border-radius:3px}
+  .kit-item .ki-tok{font-family:var(--mono);font-size:8.5px;color:#6b7284;margin-top:5px}
+  .ds-foot{margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);font-size:12.5px;color:#949cb0}
+  .ds-foot b{color:#c3ceff;font-weight:600}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="col">
+    <a href="https://dkmakes.com/index.html" class="brand">DK.Lee</a>
+    <div class="links">
+      <a href="#framework">Framework</a>
+      <a href="#prototype">Prototype</a>
+      <a href="https://dkmakes.com/index.html#work">← All work</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="col">
+    <div class="eyebrow"><span class="tag">Self-initiated</span> Design systems · AI workflow · 2026</div>
+    <h1 class="hero">A design system that reads its own metrics.</h1>
+    <p class="lede">Most AI design tools wait for a prompt. This one starts a step earlier: it watches the business numbers, and when one slips, it helps the designer diagnose <em>why</em> in UX terms, then turns that judgement into a design-system-scoped prompt an AI tool can build — consistently, and measured end to end.</p>
+    <div class="meta">
+      <div><div class="k">Type</div><div class="v">Self-initiated concept</div></div>
+      <div><div class="k">Role</div><div class="v">Concept, framework, design, build</div></div>
+      <div><div class="k">Domain</div><div class="v">Live commerce (seller)</div></div>
+      <div><div class="k">Built with</div><div class="v">Design tokens · HTML/JS · AI tooling</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- WHY -->
+<section id="why">
+  <div class="col">
+    <div class="kicker">The gap</div>
+    <h2>AI can generate a screen. It can't tell you which screen the data needs.</h2>
+    <p>The current generation of AI design tools — Figma Make, First Draft, Cursor — is genuinely good at turning a written prompt into a screen. But two things are still left entirely to the person: knowing <strong>what to change and why</strong>, and keeping every generated screen <strong>consistent</strong> with the rest of the product. Ask ten designers to prompt the same fix and you get ten different screens.</p>
+    <p>After twenty years building design systems and governance — from LG's UX Lab to Samsung Card — the interesting problem to me isn't "can AI draw the button." It's this: the senior judgement that decides <em>which</em> button, <em>why</em>, and <em>within which system</em> is exactly the part that never gets written down. So I tried to write it down, as a working system.</p>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem" style="background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="col">
+    <div class="kicker">What breaks today</div>
+    <h2>Three gaps between a metric and a fix.</h2>
+    <div class="cards">
+      <div class="card"><div class="n">gap 01</div><h3>Prompt-driven, not data-driven</h3><p>Tools react to what a person types. Deciding the screen needs changing at all still depends on someone noticing a number moved.</p></div>
+      <div class="card"><div class="n">gap 02</div><h3>Cause is skipped</h3><p>"Conversion is low" has many causes — urgency, social proof, choice overload. Jumping straight to a pattern skips the diagnosis that makes it the right pattern.</p></div>
+      <div class="card"><div class="n">gap 03</div><h3>Consistency erodes</h3><p>Each AI generation is a fresh guess. Without the design system in the loop, screens drift apart and the system decays.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- THE LOOP -->
+<section id="loop">
+  <div class="col">
+    <div class="kicker">The idea</div>
+    <h2>A closed loop, with the designer in the middle.</h2>
+    <p>The system keeps the design system stable and uses AI to move between the numbers and the screen. It doesn't replace the designer — it front-loads the monitoring and the boilerplate, and hands the judgement calls back at exactly the right moments.</p>
+  </div>
+  <div class="wide">
+    <div class="loop">
+      <div class="loop-h">The operating loop</div>
+      <div class="loop-steps">
+        <div class="lstep"><div class="ln">1</div><div class="lt">Monitor</div><div class="ld">Track the stream's own baseline for each business metric.</div></div>
+        <div class="lstep"><div class="ln">2</div><div class="lt">Diagnose</div><div class="ld">A metric slips → propose UX-theory causes. The designer picks, or adds their own.</div></div>
+        <div class="lstep"><div class="ln">3</div><div class="lt">Direct &amp; prompt</div><div class="ld">Choose how to express the fix → the system writes a token-scoped prompt.</div></div>
+        <div class="lstep"><div class="ln">4</div><div class="lt">Generate</div><div class="ld">An AI tool builds the screen from the prompt, using design-system tokens.</div></div>
+        <div class="lstep"><div class="ln">5</div><div class="lt">Track</div><div class="ld">Re-measure the metric that caused it. If it holds, promote the pattern.</div></div>
+      </div>
+      <div class="loop-foot">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9db4ff" stroke-width="2"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+        <span>The design system stays fixed. <b>AI does the moving; the designer does the deciding.</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FRAMEWORK: AARRR ecosystem -->
+<section id="framework" style="background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="col">
+    <div class="kicker">The framework</div>
+    <h2>Where business data meets the interface, across the funnel.</h2>
+    <p>A product is an ecosystem. Each stage of the funnel throws off its own business data, and each maps to a moment in the experience that a designer can shape. The framework lays that out end to end: for every stage, which <strong>data</strong> to watch, which <strong>UX principles</strong> could explain it, and which <strong>design-system components</strong> are legitimate responses.</p>
+  </div>
+  <div class="wide">
+    <div class="flow-arrows">
+      <span>business data</span><span>→ UX principle</span><span>→ system component</span>
+    </div>
+    <div class="aarrr" id="aarrr"></div>
+  </div>
+</section>
+
+<!-- DESIGN SYSTEM showcase -->
+<section id="ds">
+  <div class="col">
+    <div class="kicker">The design system in the loop</div>
+    <h2>Every response is assembled from named tokens.</h2>
+    <p>The framework only works because the responses aren't improvised. Each pattern is built from a small, governed set of tokens and components — the same ones the AI tool is told to use. That's what keeps a fix for one metric from breaking the look of everything around it.</p>
+  </div>
+  <div class="wide">
+    <div class="ds-show">
+      <div class="ds-h">Live-commerce UI kit · excerpt</div>
+      <div class="ds-title">A governed kit the system draws from</div>
+      <div class="ds-intro">Every pattern the framework proposes resolves to these tokens and components. Named states and colours are what let an AI tool generate a fix that lands inside the system, not beside it.</div>
+      <div class="ds-grid">
+
+        <!-- button states -->
+        <div class="ds-card wide">
+          <div class="dct">button/primary · states</div>
+          <div class="btn-states">
+            <div class="btn-state">
+              <button class="demo-btn" style="background:#3b5bdb">Buy now</button>
+              <div class="bs-cap"><b>default</b><br>container Blue_600<br>text White</div>
+            </div>
+            <div class="btn-state">
+              <button class="demo-btn" style="background:#f43f5e;box-shadow:0 4px 14px rgba(244,63,94,.35)">Buy now</button>
+              <div class="bs-cap"><b>emphasis</b><br>container Live_500<br>text White</div>
+            </div>
+            <div class="btn-state">
+              <button class="demo-btn" style="background:#e7ebf2;color:#5b6070">Purchased</button>
+              <div class="bs-cap"><b>done</b><br>container Bluegray_150<br>text Bluegray_800</div>
+            </div>
+            <div class="btn-state">
+              <button class="demo-btn" style="background:#eef0f4;color:#b0b5c0">Buy now</button>
+              <div class="bs-cap"><b>disabled</b><br>container Bluegray_100<br>text Bluegray_400</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- colour tokens -->
+        <div class="ds-card">
+          <div class="dct">color/*</div>
+          <div class="ds-swatches">
+            <div class="ds-sw" style="background:#f43f5e"><span style="color:#fff">live_500</span></div>
+            <div class="ds-sw" style="background:#0ea472"><span style="color:#fff">good_500</span></div>
+            <div class="ds-sw" style="background:#3b5bdb"><span style="color:#fff">blue_600</span></div>
+          </div>
+          <div class="ds-swatches">
+            <div class="ds-sw" style="background:#0e0f13"><span style="color:#fff">ink_900</span></div>
+            <div class="ds-sw" style="background:#e8843c"><span style="color:#fff">warn_500</span></div>
+            <div class="ds-sw" style="background:#eef1f5"><span style="color:#5b6070">bluegray_100</span></div>
+          </div>
+        </div>
+
+        <!-- badge + toast components -->
+        <div class="ds-card">
+          <div class="dct">badge · toast</div>
+          <div class="comp-demos">
+            <span class="demo-badge" style="background:#f43f5e">Live price · 02:59</span>
+            <span class="demo-badge" style="background:rgba(244,63,94,.15);color:#f9a8b8">42% off</span>
+            <span class="demo-badge" style="background:#fff5f5;color:#d43a52">Only 12 left</span>
+            <div class="demo-toast"><span class="d"></span>Jimin just bought this</div>
+          </div>
+        </div>
+
+        <!-- type & space -->
+        <div class="ds-card">
+          <div class="dct">type &amp; space</div>
+          <div class="ds-type">
+            <b style="font-size:15px">Aa</b> Display · 22 / 650<br>
+            <b>Aa</b> Body · 14 / 500<br>
+            <b>12</b> Price · tabular 750<br>
+          </div>
+          <div class="ds-scale">
+            <i style="background:#232a3d;flex:.5"></i><i style="background:#2b3347;flex:1"></i><i style="background:#333c54;flex:1.5"></i><i style="background:#3d4660;flex:2"></i><i style="background:#46506c;flex:3"></i>
+          </div>
+          <div class="ds-scale-lbl"><span>4</span><span>8</span><span>12</span><span>16</span><span>24</span></div>
+        </div>
+
+        <!-- component library mini kit -->
+        <div class="ds-card wide">
+          <div class="dct">component library · zones</div>
+          <div class="ds-mini-kit">
+            <div class="kit-item"><div class="ki-top"><span class="ki-sw" style="background:#3b5bdb"></span>Buy bar</div>product · price · CTA<div class="ki-tok">buybar/* · button/primary</div></div>
+            <div class="kit-item"><div class="ki-top"><span class="ki-sw" style="background:#f43f5e"></span>Purchase toast</div>real-time social proof<div class="ki-tok">toast/purchase</div></div>
+            <div class="kit-item"><div class="ki-top"><span class="ki-sw" style="background:#e8843c"></span>Scarcity banner</div>stock · countdown<div class="ki-tok">banner/scarcity · badge/timer</div></div>
+            <div class="kit-item"><div class="ki-top"><span class="ki-sw" style="background:#0ea472"></span>Recommend drawer</div>in-stream products<div class="ki-tok">drawer/recommend · card/mini</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ds-foot">
+        When the system writes a prompt it names these explicitly — <b>button/primary</b>, <b>badge/timer</b>, <b>toast/purchase</b>, and their states — so whatever the AI tool generates inherits the same colours, spacing, and behaviour as the rest of the product.
+      </div>
+    </div>
+
+    <!-- interactive links -->
+    <div class="embeds">
+      <a class="embed" href="framework.html">
+        <div class="shot"><svg class="mini" width="220" height="150" viewBox="0 0 220 150" fill="none"><rect width="220" height="150" fill="#0f1320"/><circle cx="45" cy="40" r="14" fill="#3b5bdb" opacity=".85"/><circle cx="110" cy="40" r="14" fill="#5b6070"/><circle cx="175" cy="40" r="14" fill="#5b6070"/><path d="M59 40h37M124 40h37" stroke="#3b5bdb" stroke-width="1.5"/><rect x="26" y="72" width="168" height="10" rx="3" fill="#232838"/><rect x="26" y="90" width="130" height="10" rx="3" fill="#232838"/><rect x="26" y="108" width="150" height="10" rx="3" fill="#232838"/><rect x="26" y="72" width="60" height="10" rx="3" fill="#3b5bdb" opacity=".8"/></svg></div>
+        <div class="body"><div class="etag">Interactive · 01</div><h3>Explore the framework</h3><p>Pick any signal and trace it, live, through zone → cause → direction → design-system tokens.</p><div class="go">Open framework →</div></div>
+      </a>
+      <a class="embed" href="prototype.html">
+        <div class="shot"><svg class="mini" width="220" height="150" viewBox="0 0 220 150" fill="none"><rect width="220" height="150" fill="#0f1320"/><rect x="150" y="20" width="54" height="110" rx="10" fill="#181d2b"/><rect x="156" y="26" width="42" height="72" rx="4" fill="#c9d3e0" opacity=".3"/><rect x="156" y="104" width="42" height="20" rx="4" fill="#f43f5e" opacity=".85"/><rect x="20" y="28" width="110" height="9" rx="3" fill="#3b5bdb" opacity=".8"/><rect x="20" y="46" width="90" height="7" rx="3" fill="#232838"/><rect x="20" y="62" width="110" height="24" rx="5" fill="#181d2b"/><rect x="20" y="94" width="110" height="24" rx="5" fill="#181d2b"/></svg></div>
+        <div class="body"><div class="etag">Interactive · 02</div><h3>Run the prototype</h3><p>Drag a metric below target, diagnose the cause, and watch the seller screen rebuild itself.</p><div class="go">Open prototype →</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- DIAGNOSIS depth -->
+<section id="diagnosis">
+  <div class="col">
+    <div class="kicker">Why the diagnosis step matters</div>
+    <h2>The same low number can need three different screens.</h2>
+    <p>If view-to-purchase conversion drops, the lazy move is to make the buy button bigger. But conversion can fall because there's <strong>no urgency</strong>, because buyers can't see <strong>social proof</strong>, or because the action simply doesn't <strong>stand out</strong>. Each cause points to a different design — and only a designer who knows the stream should decide which.</p>
+    <p>So the system never jumps from number to pattern. It proposes causes drawn from UX principles — Hick's Law, Scarcity, Social Proof, Von Restorff, Jakob's Law — and the designer selects, combines, or writes in one the system didn't suggest. Then, for the chosen cause, it offers directions for <em>how</em> to express it, and again leaves room for the designer's own idea. Judgement stays human at every branch.</p>
+    <div class="pillrow">
+      <span class="pill">Sense of Urgency</span><span class="pill">Social Proof</span><span class="pill">Hick's Law</span>
+      <span class="pill">Von Restorff Effect</span><span class="pill">Paradox of Choice</span><span class="pill">Validation &amp; Feedback</span><span class="pill">+ your own</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROMPT -->
+<section id="prototype" style="background:var(--paper);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="col">
+    <div class="kicker">From judgement to prompt</div>
+    <h2>The output is a prompt scoped to the design system.</h2>
+    <p>Once the cause and direction are set, the system assembles a prompt carrying the diagnosis, the direction, and the exact design tokens to use — the constraints that AI tools need but people usually leave out. It targets whichever tool the team uses: Claude Code, Figma Make, or Cursor. Because the tokens are named, the generated screen stays consistent with everything else.</p>
+    <div class="promptbox"><span class="k">Goal:</span> Improve <span class="s">view→purchase CVR (below 1.20% target)</span> on a live-commerce buy bar.
+<span class="k">Diagnosed cause:</span> Sense of Urgency; Social Proof.
+<span class="k">Design direction:</span> live-price countdown, real-time purchase alerts.
+<span class="k">Use system tokens:</span> badge/timer, toast/purchase, color/live.
+<span class="k">Consistency:</span> reuse live-UI spacing &amp; type tokens; keep one primary action; non-blocking.
+<span class="k">Measure:</span> view→purchase CVR, buy-button tap rate.
+<span class="k">Output for:</span> Claude Code.</div>
+    <p style="margin-top:22px">The prototype makes this whole path live. Move a metric, diagnose it, and the seller screen rebuilds with only the patterns your diagnosis called for — then an impact panel shows the metric being re-measured and the pattern promoted if it holds.</p>
+    <div class="embeds" style="grid-template-columns:1fr">
+      <a class="embed" href="prototype.html">
+        <div class="body" style="display:flex;align-items:center;gap:16px;justify-content:space-between">
+          <div><div class="etag">Interactive · 02</div><h3 style="margin:0">Run the working prototype</h3><p>Signal → diagnosis → prompt → generated screen → tracking, end to end.</p></div>
+          <div class="go" style="margin:0;white-space:nowrap">Open →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section id="principles">
+  <div class="col">
+    <div class="kicker">What it's really arguing</div>
+    <h2>A point of view on the designer's role in the AI era.</h2>
+    <div class="principles">
+      <div class="principle"><h3>Data starts the work</h3><p>The trigger is a business signal, not a prompt. Design begins where the numbers move.</p></div>
+      <div class="principle"><h3>Judgement is the scarce part</h3><p>AI can generate; it can't diagnose intent. The cause-and-direction step keeps the senior call human.</p></div>
+      <div class="principle"><h3>The system is the guardrail</h3><p>Every generation is scoped to named tokens, so speed never costs consistency.</p></div>
+      <div class="principle"><h3>Nothing ships unmeasured</h3><p>The metric that triggered the change is the metric that judges it. Patterns earn their place.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSE -->
+<div class="close">
+  <div class="col">
+    <div class="kicker">Close</div>
+    <h2>Semi-automated, deliberately.</h2>
+    <p class="lede">The goal was never a machine that designs on its own. It's a system that does the watching and the wiring, and asks the designer to do the one thing only they can: decide what the experience should mean, and why. That's the version of AI-era design work I want to do — and this is me building it, not just talking about it.</p>
+    <div class="backrow">
+      <a href="framework.html">Explore the framework →</a>
+      <a href="prototype.html">Run the prototype →</a>
+      <a href="https://dkmakes.com/index.html#work">All work →</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="col">© 2026 DK Lee · dkmakes.com · Self-initiated concept</div>
+</footer>
+
+<script>
+const AARRR=[
+  {L:"A",color:"#3b5bdb",name:"Acquisition",ko:"획득",q:"Are viewers arriving at the stream?",
+   data:[
+     {m:"CTR",d:"clicks ÷ impressions on cards & CTAs",spark:[28,30,29,33,35,38]},
+     {m:"Bounce rate",d:"left after the first screen only",spark:[30,34,32,38,36,40],bad:true},
+   ],
+   ux:["Jakob's Law","Findable"],
+   focus:"UX focus — landing clarity, CTA visibility, ad-to-experience consistency.",
+   comps:[{n:"Entry banner",t:"banner/promo"},{n:"Stream thumbnail",t:"card/stream"}]},
+  {L:"A",color:"#5b6bd8",name:"Activation",ko:"활성화",q:"Do they hit the first value in 30s?",
+   data:[
+     {m:"Activation rate",d:"reached the first key action",spark:[40,42,44,46,48,50]},
+     {m:"Drop-off rate",d:"left mid-flow, first 30s",spark:[40,44,48,52,58,63],bad:true},
+   ],
+   ux:["Von Restorff","Sense of Urgency"],
+   focus:"UX focus — fast first value, minimal early friction, show the product quickly.",
+   comps:[{n:"Scarcity banner",t:"banner/scarcity"},{n:"Live pace chip",t:"chip/pace"}]},
+  {L:"R",color:"#7b5bd8",name:"Retention",ko:"유지",q:"Do they keep watching &amp; return?",
+   data:[
+     {m:"D7 retention",d:"active again after 7 days",spark:[46,44,42,40,38,36],bad:true},
+     {m:"Churn rate",d:"stopped using in the period",spark:[30,32,34,36,38,40],bad:true},
+   ],
+   ux:["Hook model","Feedback"],
+   focus:"UX focus — reminders, habit loops, continuous value that pulls people back.",
+   comps:[{n:"Follow / alert",t:"action/follow"},{n:"Like + live count",t:"chip/reaction"}]},
+  {L:"R",color:"#b3529e",name:"Referral",ko:"추천",q:"Do they bring others in?",
+   data:[
+     {m:"Referral rate",d:"invited at least one other",spark:[20,22,24,26,30,34]},
+     {m:"K-factor",d:"new users each user brings",spark:[18,20,22,25,28,31]},
+   ],
+   ux:["Social Proof","Conformity"],
+   focus:"UX focus — share flow, referral incentives, visible social proof.",
+   comps:[{n:"Share sheet",t:"action/share"},{n:"Live viewer count",t:"chip/viewers"}]},
+  {L:"R",color:"#e8843c",name:"Revenue",ko:"수익화",q:"Do they buy, and buy more?",
+   data:[
+     {m:"View → purchase (CVR)",d:"completed a purchase",spark:[52,48,44,42,40,38],bad:true},
+     {m:"Add-to-cart rate",d:"added an item to cart",spark:[36,38,40,42,44,46]},
+   ],
+   ux:["Sense of Urgency","Social Proof","Hick's Law"],
+   focus:"UX focus — checkout UX, trust signals, persuasive copy, error prevention.",
+   comps:[{n:"Buy bar + CTA",t:"button/primary"},{n:"Purchase toast",t:"toast/purchase"},{n:"Recommend drawer",t:"drawer/recommend"}]},
+];
+function sparkHtml(vals,bad){
+  const max=Math.max(...vals);
+  return vals.map((v,i)=>{
+    const h=Math.round(v/max*100);
+    const isLast=i===vals.length-1;
+    const col=bad?(isLast?'#e8843c':'#c7ccd8'):(isLast?'#0ea472':'#c7ccd8');
+    return `<i style="height:${h}%;background:${col}"></i>`;
+  }).join('');
+}
+document.getElementById('aarrr').innerHTML=AARRR.map(s=>`
+  <div class="stage-row">
+    <div class="stage-grid">
+      <div class="stage-cell stage-id">
+        <div class="stage-letter" style="background:${s.color}">${s.L}</div>
+        <div class="stage-name">${s.name}<span class="ko">${s.ko}</span></div>
+        <div class="stage-q">${s.q}</div>
+      </div>
+      <div class="stage-cell">
+        <div class="cell-lbl">Business data</div>
+        ${s.data.map(d=>`<div class="data-chip"><span class="spark">${sparkHtml(d.spark,d.bad)}</span><span class="dtext"><span class="dm">${d.m}</span><br><span class="dd">${d.d}</span></span></div>`).join('')}
+      </div>
+      <div class="stage-cell">
+        <div class="cell-lbl">UX principle</div>
+        ${s.ux.map(u=>`<span class="ux-tag">${u}</span>`).join('')}
+        <div class="ux-focus">${s.focus}</div>
+      </div>
+      <div class="stage-cell">
+        <div class="cell-lbl">Design-system component</div>
+        <div class="comp">${s.comps.map(c=>`<div class="comp-item">${c.n}<span class="comp-tok">${c.t}</span></div>`).join('')}</div>
+      </div>
+    </div>
+  </div>`).join('');
+</script>
+</body>
+</html>
