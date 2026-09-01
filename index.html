@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <title>DK Lee: UX Strategist &amp; Designer</title>
 <meta name="description" content="DK Lee is a UX strategist and designer with 20+ years of experience across finance and commerce: Coupang, HSBC, Samsung Card, and LG Electronics.">
 <meta property="og:title" content="DK Lee: UX Strategist &amp; Designer">
@@ -205,8 +206,8 @@
     <a href="#top" class="brand">DK<span>.</span>Lee</a>
     <button class="nav-toggle" aria-label="Menu" onclick="document.getElementById('nav').classList.toggle('open')">☰</button>
     <nav class="links" id="nav">
-      <a href="#work">Work</a>
       <a href="#featured">Case Studies</a>
+      <a href="#work">Work</a>
       <a href="#about">About</a>
       <a href="assets/DK-Lee-Resume.pdf" target="_blank" rel="noopener">Resume</a>
       <a href="#contact">Contact</a>
@@ -244,13 +245,78 @@
   </div>
 </section>
 
+<!-- FEATURED CASE STUDIES -->
+<section class="featured featured-light" id="featured">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-label">In depth</div>
+      <h2 class="display">Three problems, followed end to end.</h2>
+      <p>The full arc (business goal, hypothesis, prototype, and measured outcome) for three projects I led from research to result.</p>
+    </div>
+
+    <!-- Signal → Screen -->
+    <div class="case reveal">
+      <div class="case-media">
+        <div class="case-shots single">
+          <img src="assets/signal-screen-card.jpg" alt="Signal → Screen design system" data-zoom="assets/signal-screen-card.jpg">
+        </div>
+      </div>
+      <div class="case-body">
+        <div class="case-meta">Design Systems · AI Workflow · 2026</div>
+        <h3 class="display">Turning a shifting metric into a governed AI prompt</h3>
+        <p class="desc">Most AI design tools wait for a prompt. I built a system that starts a step earlier: it watches business metrics, walks the designer through UX-theory causes when one slips, and turns the chosen direction into a prompt scoped to design-system tokens, so every AI-generated screen stays consistent.</p>
+        <a href="signal-screen/index.html" class="case-link">Read the full case study →</a>
+      </div>
+    </div>
+
+    <!-- Coupang -->
+    <div class="case rev reveal">
+      <div class="case-media">
+        <div class="case-shots">
+          <img src="assets/coupang-live-3.jpg" alt="Coupang Live: real-time purchase nudge" data-zoom="assets/coupang-live-3.jpg">
+          <img src="assets/coupang-live-6.jpg" alt="Coupang Live: add-to-cart social proof" data-zoom="assets/coupang-live-6.jpg">
+        </div>
+      </div>
+      <div class="case-body">
+        <div class="case-meta">Coupang · Live Commerce · 2022</div>
+        <h3 class="display">Turning live viewers into buyers</h3>
+        <p class="desc">Live shopping had reach but weak conversion. I introduced real-time purchase &amp; cart alerts to trigger a sense of urgency, a like button for engagement, and a "recommended" drawer to keep browsers inside the stream.</p>
+        <div class="metrics">
+          <div class="metric"><b>+14<i>%</i></b><small>Purchase conversion (CVR)</small></div>
+          <div class="metric"><b>-10<i>%p</i></b><small>Drop-off rate</small></div>
+        </div>
+        <a href="coupang-live.html" class="case-link">Read the full case study →</a>
+      </div>
+    </div>
+
+    <!-- Samsung -->
+    <div class="case reveal">
+      <div class="case-media">
+        <div class="case-shots single">
+          <img src="assets/detail.jpg" alt="Samsung Card website redesign" data-zoom="assets/detail.jpg">
+        </div>
+      </div>
+      <div class="case-body">
+        <div class="case-meta">Samsung Card · Website Renewal · 2018</div>
+        <h3 class="display">Making a dense financial site easy to move through</h3>
+        <p class="desc">A complex information structure was burying key services. I simplified the IA around one-click access and layered in personalised content, delivering a consistent experience across mobile and desktop.</p>
+        <div class="metrics">
+          <div class="metric"><b>+12<i>%</i></b><small>Click-through (CTR)</small></div>
+          <div class="metric"><b>+25<i>%</i></b><small>Conversion (CVR)</small></div>
+        </div>
+        <a href="samsung-card.html" class="case-link">Read the full case study →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- MORE WORK -->
 <section id="work">
   <div class="wrap">
     <div class="sec-head reveal">
       <div class="sec-label">Selected work</div>
       <h2 class="display">A career across finance, commerce &amp; consumer tech.</h2>
-      <p>Eleven projects across Coupang, HSBC, Samsung Card, LG Electronics, and self-initiated work. Tap any to read more.</p>
+      <p>Eleven projects across Coupang, HSBC, Samsung Card, LG Electronics, and independent work. Tap any to read more.</p>
     </div>
     <div class="grid">
 
@@ -260,7 +326,7 @@
           <div class="card-tag">Design Systems · AI Workflow</div>
           <h4>Signal → Screen</h4>
           <p>A design system that reads its own metrics: diagnosing the UX cause behind a shifting number, then turning it into a design-system-scoped AI prompt.</p>
-          <div class="card-foot"><span>Self-initiated</span><span>2026</span></div>
+          <div class="card-foot"><span>Concept</span><span>2026</span></div>
         </div>
       </a>
 
@@ -364,56 +430,6 @@
         </div>
       </a>
 
-    </div>
-  </div>
-</section>
-
-<!-- FEATURED CASE STUDIES -->
-<section class="featured featured-light" id="featured">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <div class="sec-label">In depth</div>
-      <h2 class="display">Two problems, followed end to end.</h2>
-      <p>The full arc (business goal, hypothesis, prototype, and measured outcome) for two products I led from research to shipped result.</p>
-    </div>
-
-    <!-- Coupang -->
-    <div class="case reveal">
-      <div class="case-media">
-        <div class="case-shots">
-          <img src="assets/coupang-live-3.jpg" alt="Coupang Live: real-time purchase nudge" data-zoom="assets/coupang-live-3.jpg">
-          <img src="assets/coupang-live-6.jpg" alt="Coupang Live: add-to-cart social proof" data-zoom="assets/coupang-live-6.jpg">
-        </div>
-      </div>
-      <div class="case-body">
-        <div class="case-meta">Coupang · Live Commerce · 2022</div>
-        <h3 class="display">Turning live viewers into buyers</h3>
-        <p class="desc">Live shopping had reach but weak conversion. I introduced real-time purchase &amp; cart alerts to trigger a sense of urgency, a like button for engagement, and a "recommended" drawer to keep browsers inside the stream.</p>
-        <div class="metrics">
-          <div class="metric"><b>+14<i>%</i></b><small>Purchase conversion (CVR)</small></div>
-          <div class="metric"><b>-10<i>%p</i></b><small>Drop-off rate</small></div>
-        </div>
-        <a href="coupang-live.html" class="case-link">Read the full case study →</a>
-      </div>
-    </div>
-
-    <!-- Samsung -->
-    <div class="case rev reveal">
-      <div class="case-media">
-        <div class="case-shots single">
-          <img src="assets/detail.jpg" alt="Samsung Card website redesign" data-zoom="assets/detail.jpg">
-        </div>
-      </div>
-      <div class="case-body">
-        <div class="case-meta">Samsung Card · Website Renewal · 2018</div>
-        <h3 class="display">Making a dense financial site easy to move through</h3>
-        <p class="desc">A complex information structure was burying key services. I simplified the IA around one-click access and layered in personalised content, delivering a consistent experience across mobile and desktop.</p>
-        <div class="metrics">
-          <div class="metric"><b>+12<i>%</i></b><small>Click-through (CTR)</small></div>
-          <div class="metric"><b>+25<i>%</i></b><small>Conversion (CVR)</small></div>
-        </div>
-        <a href="samsung-card.html" class="case-link">Read the full case study →</a>
-      </div>
     </div>
   </div>
 </section>
