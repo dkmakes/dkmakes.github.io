@@ -211,7 +211,7 @@
           <button class="cta" id="cta">Buy</button>
         </div>
       </div></div>
-      <div class="stage-cap"><b>Seller's live screen</b> — AI-generated from the design system</div>
+      <div class="stage-cap"><b>Seller's live screen</b>: AI-generated from the design system</div>
       <div class="track" id="track">
         <div class="track-h"><span>Impact tracking</span><span class="goal" id="track-goal"></span></div>
         <div class="track-b"><div class="spark" id="spark"></div>
@@ -227,7 +227,7 @@
 const METRICS=[
   {id:"cvr",name:"View → purchase (CVR)",unit:"%",min:0.6,max:2.2,step:0.01,value:1.37,target:1.20,higherIsBetter:true,
    zone:"Purchase-decision zone (buy bar)",
-   why:"Viewers watch but don't buy. Many possible reasons — pick the ones you believe apply.",
+   why:"Viewers watch but don't buy. Many possible reasons. Pick the ones you believe apply.",
    success:"View→purchase CVR, buy-button tap rate",lift:"+14% conversion",
    causes:[
      {id:"urgency",law:"Sense of Urgency / Scarcity",text:"No reason to buy now rather than later",
@@ -367,7 +367,7 @@ function renderDiagnosis(){
     const hasCause = st.causes.size>0 || st.extraCauses.length>0;
     const hasDir = selectedDirs(m).length>0 || Object.values(st.extraDirs).some(a=>a.length);
 
-    // STAGE 1 — cause
+    // STAGE 1: cause
     const causeOpts=m.causes.map(c=>{
       const on=st.causes.has(c.id);
       return `<div class="opt ${on?'on':''}" data-cause="${m.id}|${c.id}">
@@ -379,7 +379,7 @@ function renderDiagnosis(){
       <span class="box"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg></span>
       <div class="opt-main"><div class="opt-title">${t}</div><div class="opt-desc">your added cause</div></div></div>`).join("");
 
-    // STAGE 2 — direction (only for chosen causes)
+    // STAGE 2: direction (only for chosen causes)
     let dirBlocks="";
     m.causes.forEach(c=>{
       if(!st.causes.has(c.id))return;
@@ -424,7 +424,7 @@ function renderDiagnosis(){
               <button class="copy-btn" data-copy="${m.id}">Copy</button>
             </div>
             <div class="prompt-code" id="code-${m.id}">${buildPrompt(m)}</div>
-            <div class="prompt-foot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0ea472" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Cause + direction + system tokens — so the generated screen is on-purpose and consistent.</div>
+            <div class="prompt-foot"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0ea472" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Cause + direction + system tokens, so the generated screen is on-purpose and consistent.</div>
             <div class="apply-row"><button class="btn btn-primary btn-block" data-apply="${m.id}">Generate &amp; apply to screen</button></div>
           </div>
         </div>

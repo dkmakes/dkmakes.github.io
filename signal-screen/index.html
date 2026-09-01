@@ -212,7 +212,7 @@
   <div class="col">
     <div class="eyebrow"><span class="tag">Concept</span> Design systems · AI workflow · 2026</div>
     <h1 class="hero">A design system that reads its own metrics.</h1>
-    <p class="lede">Most AI design tools wait for a prompt. This one starts a step earlier: it watches the business numbers, and when one slips, it helps the designer diagnose <em>why</em> in UX terms, then turns that judgement into a design-system-scoped prompt an AI tool can build — consistently, and measured end to end.</p>
+    <p class="lede">Most AI design tools wait for a prompt. This one starts a step earlier: it watches the business numbers, and when one slips, it helps the designer diagnose <em>why</em> in UX terms, then turns that judgement into a design-system-scoped prompt an AI tool can build, consistently, and measured end to end.</p>
     <div class="meta">
       <div><div class="k">Type</div><div class="v">Concept project</div></div>
       <div><div class="k">Role</div><div class="v">Concept, framework, design, build</div></div>
@@ -227,8 +227,8 @@
   <div class="col">
     <div class="kicker">The gap</div>
     <h2>AI can generate a screen. It can't tell you which screen the data needs.</h2>
-    <p>The current generation of AI design tools — Figma Make, First Draft, Cursor — is genuinely good at turning a written prompt into a screen. But two things are still left entirely to the person: knowing <strong>what to change and why</strong>, and keeping every generated screen <strong>consistent</strong> with the rest of the product. Ask ten designers to prompt the same fix and you get ten different screens.</p>
-    <p>After twenty years building design systems and governance — from LG's UX Lab to Samsung Card — the interesting problem to me isn't "can AI draw the button." It's this: the senior judgement that decides <em>which</em> button, <em>why</em>, and <em>within which system</em> is exactly the part that never gets written down. So I tried to write it down, as a working system.</p>
+    <p>The current generation of AI design tools (Figma Make, First Draft, Cursor) is genuinely good at turning a written prompt into a screen. But two things are still left entirely to the person: knowing <strong>what to change and why</strong>, and keeping every generated screen <strong>consistent</strong> with the rest of the product. Ask ten designers to prompt the same fix and you get ten different screens.</p>
+    <p>After twenty years building design systems and governance (from LG's UX Lab to Samsung Card), the interesting problem to me isn't "can AI draw the button." It's this: the senior judgement that decides <em>which</em> button, <em>why</em>, and <em>within which system</em> is exactly the part that never gets written down. So I tried to write it down, as a working system.</p>
   </div>
 </section>
 
@@ -239,7 +239,7 @@
     <h2>Three gaps between a metric and a fix.</h2>
     <div class="cards">
       <div class="card"><div class="n">gap 01</div><h3>Prompt-driven, not data-driven</h3><p>Tools react to what a person types. Deciding the screen needs changing at all still depends on someone noticing a number moved.</p></div>
-      <div class="card"><div class="n">gap 02</div><h3>Cause is skipped</h3><p>"Conversion is low" has many causes — urgency, social proof, choice overload. Jumping straight to a pattern skips the diagnosis that makes it the right pattern.</p></div>
+      <div class="card"><div class="n">gap 02</div><h3>Cause is skipped</h3><p>"Conversion is low" has many causes: urgency, social proof, choice overload. Jumping straight to a pattern skips the diagnosis that makes it the right pattern.</p></div>
       <div class="card"><div class="n">gap 03</div><h3>Consistency erodes</h3><p>Each AI generation is a fresh guess. Without the design system in the loop, screens drift apart and the system decays.</p></div>
     </div>
   </div>
@@ -250,7 +250,7 @@
   <div class="col">
     <div class="kicker">The idea</div>
     <h2>A closed loop, with the designer in the middle.</h2>
-    <p>The system keeps the design system stable and uses AI to move between the numbers and the screen. It doesn't replace the designer — it front-loads the monitoring and the boilerplate, and hands the judgement calls back at exactly the right moments.</p>
+    <p>The system keeps the design system stable and uses AI to move between the numbers and the screen. It doesn't replace the designer: it front-loads the monitoring and the boilerplate, and hands the judgement calls back at exactly the right moments.</p>
   </div>
   <div class="wide">
     <div class="loop">
@@ -290,7 +290,7 @@
   <div class="col">
     <div class="kicker">The design system in the loop</div>
     <h2>Every response is assembled from named tokens.</h2>
-    <p>The framework only works because the responses aren't improvised. Each pattern is built from a small, governed set of tokens and components — the same ones the AI tool is told to use. That's what keeps a fix for one metric from breaking the look of everything around it.</p>
+    <p>The framework only works because the responses aren't improvised. Each pattern is built from a small, governed set of tokens and components, the same ones the AI tool is told to use. That's what keeps a fix for one metric from breaking the look of everything around it.</p>
   </div>
   <div class="wide">
     <div class="ds-show">
@@ -374,7 +374,7 @@
         </div>
       </div>
       <div class="ds-foot">
-        When the system writes a prompt it names these explicitly — <b>button/primary</b>, <b>badge/timer</b>, <b>toast/purchase</b>, and their states — so whatever the AI tool generates inherits the same colours, spacing, and behaviour as the rest of the product.
+        When the system writes a prompt it names these explicitly: <b>button/primary</b>, <b>badge/timer</b>, <b>toast/purchase</b>, and their states, so whatever the AI tool generates inherits the same colours, spacing, and behaviour as the rest of the product.
       </div>
     </div>
 
@@ -397,8 +397,8 @@
   <div class="col">
     <div class="kicker">Why the diagnosis step matters</div>
     <h2>The same low number can need three different screens.</h2>
-    <p>If view-to-purchase conversion drops, the lazy move is to make the buy button bigger. But conversion can fall because there's <strong>no urgency</strong>, because buyers can't see <strong>social proof</strong>, or because the action simply doesn't <strong>stand out</strong>. Each cause points to a different design — and only a designer who knows the stream should decide which.</p>
-    <p>So the system never jumps from number to pattern. It proposes causes drawn from UX principles — Hick's Law, Scarcity, Social Proof, Von Restorff, Jakob's Law — and the designer selects, combines, or writes in one the system didn't suggest. Then, for the chosen cause, it offers directions for <em>how</em> to express it, and again leaves room for the designer's own idea. Judgement stays human at every branch.</p>
+    <p>If view-to-purchase conversion drops, the lazy move is to make the buy button bigger. But conversion can fall because there's <strong>no urgency</strong>, because buyers can't see <strong>social proof</strong>, or because the action simply doesn't <strong>stand out</strong>. Each cause points to a different design, and only a designer who knows the stream should decide which.</p>
+    <p>So the system never jumps from number to pattern. It proposes causes drawn from UX principles: Hick's Law, Scarcity, Social Proof, Von Restorff, Jakob's Law, and the designer selects, combines, or writes in one the system didn't suggest. Then, for the chosen cause, it offers directions for <em>how</em> to express it, and again leaves room for the designer's own idea. Judgement stays human at every branch.</p>
     <div class="pillrow">
       <span class="pill">Sense of Urgency</span><span class="pill">Social Proof</span><span class="pill">Hick's Law</span>
       <span class="pill">Von Restorff Effect</span><span class="pill">Paradox of Choice</span><span class="pill">Validation &amp; Feedback</span><span class="pill">+ your own</span>
@@ -411,7 +411,7 @@
   <div class="col">
     <div class="kicker">From judgement to prompt</div>
     <h2>The output is a prompt scoped to the design system.</h2>
-    <p>Once the cause and direction are set, the system assembles a prompt carrying the diagnosis, the direction, and the exact design tokens to use — the constraints that AI tools need but people usually leave out. It targets whichever tool the team uses: Claude Code, Figma Make, or Cursor. Because the tokens are named, the generated screen stays consistent with everything else.</p>
+    <p>Once the cause and direction are set, the system assembles a prompt carrying the diagnosis, the direction, and the exact design tokens to use, the constraints that AI tools need but people usually leave out. It targets whichever tool the team uses: Claude Code, Figma Make, or Cursor. Because the tokens are named, the generated screen stays consistent with everything else.</p>
     <div class="promptbox"><span class="k">Goal:</span> Improve <span class="s">view→purchase CVR (below 1.20% target)</span> on a live-commerce buy bar.
 <span class="k">Diagnosed cause:</span> Sense of Urgency; Social Proof.
 <span class="k">Design direction:</span> live-price countdown, real-time purchase alerts.
@@ -419,7 +419,7 @@
 <span class="k">Consistency:</span> reuse live-UI spacing &amp; type tokens; keep one primary action; non-blocking.
 <span class="k">Measure:</span> view→purchase CVR, buy-button tap rate.
 <span class="k">Output for:</span> Claude Code.</div>
-    <p style="margin-top:22px">The prototype makes this whole path live. Move a metric, diagnose it, and the seller screen rebuilds with only the patterns your diagnosis called for — then an impact panel shows the metric being re-measured and the pattern promoted if it holds.</p>
+    <p style="margin-top:22px">The prototype makes this whole path live. Move a metric, diagnose it, and the seller screen rebuilds with only the patterns your diagnosis called for, then an impact panel shows the metric being re-measured and the pattern promoted if it holds.</p>
     <div class="embeds" style="grid-template-columns:1fr">
       <a class="embed" href="prototype.html">
         <div class="body" style="display:flex;align-items:center;gap:16px;justify-content:space-between">
@@ -450,7 +450,7 @@
   <div class="col">
     <div class="kicker">Close</div>
     <h2>Semi-automated, deliberately.</h2>
-    <p class="lede">The goal was never a machine that designs on its own. It's a system that does the watching and the wiring, and asks the designer to do the one thing only they can: decide what the experience should mean, and why. That's the version of AI-era design work I want to do — and this is me building it, not just talking about it.</p>
+    <p class="lede">The goal was never a machine that designs on its own. It's a system that does the watching and the wiring, and asks the designer to do the one thing only they can: decide what the experience should mean, and why. That's the version of AI-era design work I want to do, and this is me building it, not just talking about it.</p>
     <div class="backrow">
       <a href="framework.html">Explore the framework →</a>
       <a href="prototype.html">Run the prototype →</a>
@@ -471,7 +471,7 @@ const AARRR=[
      {m:"Bounce rate",d:"left after the first screen only",spark:[30,34,32,38,36,40],bad:true},
    ],
    ux:["Jakob's Law","Findable"],
-   focus:"UX focus — landing clarity, CTA visibility, ad-to-experience consistency.",
+   focus:"UX focus: landing clarity, CTA visibility, ad-to-experience consistency.",
    comps:[{n:"Entry banner",t:"banner/promo"},{n:"Stream thumbnail",t:"card/stream"}]},
   {L:"A",color:"#5b6bd8",name:"Activation",ko:"활성화",q:"Do they hit the first value in 30s?",
    data:[
@@ -479,7 +479,7 @@ const AARRR=[
      {m:"Drop-off rate",d:"left mid-flow, first 30s",spark:[40,44,48,52,58,63],bad:true},
    ],
    ux:["Von Restorff","Sense of Urgency"],
-   focus:"UX focus — fast first value, minimal early friction, show the product quickly.",
+   focus:"UX focus: fast first value, minimal early friction, show the product quickly.",
    comps:[{n:"Scarcity banner",t:"banner/scarcity"},{n:"Live pace chip",t:"chip/pace"}]},
   {L:"R",color:"#7b5bd8",name:"Retention",ko:"유지",q:"Do they keep watching &amp; return?",
    data:[
@@ -487,7 +487,7 @@ const AARRR=[
      {m:"Churn rate",d:"stopped using in the period",spark:[30,32,34,36,38,40],bad:true},
    ],
    ux:["Hook model","Feedback"],
-   focus:"UX focus — reminders, habit loops, continuous value that pulls people back.",
+   focus:"UX focus: reminders, habit loops, continuous value that pulls people back.",
    comps:[{n:"Follow / alert",t:"action/follow"},{n:"Like + live count",t:"chip/reaction"}]},
   {L:"R",color:"#b3529e",name:"Referral",ko:"추천",q:"Do they bring others in?",
    data:[
@@ -495,7 +495,7 @@ const AARRR=[
      {m:"K-factor",d:"new users each user brings",spark:[18,20,22,25,28,31]},
    ],
    ux:["Social Proof","Conformity"],
-   focus:"UX focus — share flow, referral incentives, visible social proof.",
+   focus:"UX focus: share flow, referral incentives, visible social proof.",
    comps:[{n:"Share sheet",t:"action/share"},{n:"Live viewer count",t:"chip/viewers"}]},
   {L:"R",color:"#e8843c",name:"Revenue",ko:"수익화",q:"Do they buy, and buy more?",
    data:[
@@ -503,7 +503,7 @@ const AARRR=[
      {m:"Add-to-cart rate",d:"added an item to cart",spark:[36,38,40,42,44,46]},
    ],
    ux:["Sense of Urgency","Social Proof","Hick's Law"],
-   focus:"UX focus — checkout UX, trust signals, persuasive copy, error prevention.",
+   focus:"UX focus: checkout UX, trust signals, persuasive copy, error prevention.",
    comps:[{n:"Buy bar + CTA",t:"button/primary"},{n:"Purchase toast",t:"toast/purchase"},{n:"Recommend drawer",t:"drawer/recommend"}]},
 ];
 function sparkHtml(vals,bad){
