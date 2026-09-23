@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>독일 배당 계산기</title>
+<meta name="description" content="독일 거주자 기준, 배당 ETF로 목표 월 수령액을 만들기 위한 세전 배당액과 필요 투자원금을 계산합니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --bg:#f2f4f2; --surface:#ffffff; --surface-2:#f7f9f7;
+    --ink:#15201d; --ink-2:#3c4a46; --muted:#6a7874; --line:#dde4e1; --line-2:#eef2f0;
+    --net:#00897b; --gross:#bf5a04;
+    --net-soft:rgba(0,137,123,.10); --gross-soft:rgba(191,90,4,.10);
+    --warn:#a4451a; --warn-soft:rgba(164,69,26,.09);
+    --good:#2f7d32; --mid:#87703a; --low:#8a5b5b;
+    --shadow:0 1px 2px rgba(20,32,29,.05), 0 8px 24px -12px rgba(20,32,29,.18);
+    --mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans:"IBM Plex Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme: dark;
+      --bg:#111514; --surface:#1a201e; --surface-2:#212826;
+      --ink:#e7edeb; --ink-2:#c2ccc9; --muted:#8fa09b; --line:#2b3432; --line-2:#232b29;
+      --net:#26a99a; --gross:#cf7a2c;
+      --net-soft:rgba(38,169,154,.14); --gross-soft:rgba(207,122,44,.14);
+      --warn:#e08a55; --warn-soft:rgba(224,138,85,.12);
+      --good:#68b06a; --mid:#bda36a; --low:#c08f8f;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme: dark;
+    --bg:#111514; --surface:#1a201e; --surface-2:#212826;
+    --ink:#e7edeb; --ink-2:#c2ccc9; --muted:#8fa09b; --line:#2b3432; --line-2:#232b29;
+    --net:#26a99a; --gross:#cf7a2c;
+    --net-soft:rgba(38,169,154,.14); --gross-soft:rgba(207,122,44,.14);
+    --warn:#e08a55; --warn-soft:rgba(224,138,85,.12);
+    --good:#68b06a; --mid:#bda36a; --low:#c08f8f;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:15px; line-height:1.6;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  img{max-width:100%}
+  .wrap{max-width:900px; margin:0 auto; padding-inline:20px; padding-block:44px 72px}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(26px,5.2vw,38px); font-weight:600; line-height:1.18;
+    letter-spacing:-.022em; margin:0 0 12px; text-wrap:balance;
+  }
+  .lede{margin:0; color:var(--ink-2); max-width:62ch; font-size:15px}
+  .lede code{font-family:var(--mono); font-size:.88em; background:var(--surface-2); padding:1px 4px; border-radius:4px; margin:0 1px}
+  hr.rule{border:0; border-top:1px solid var(--line); margin:32px 0}
+
+  h2{font-size:17px; font-weight:600; letter-spacing:-.012em; margin:0}
+  .h2row{display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:6px 16px}
+  .h2note{font-size:12.5px; color:var(--muted)}
+
+  /* ---------- controls ---------- */
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:20px; box-shadow:var(--shadow);
+  }
+  .ctrl-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+  @media (max-width:580px){ .ctrl-grid{grid-template-columns:1fr} }
+  .field{display:flex; flex-direction:column; gap:9px; min-width:0}
+  .field > label, .flabel{
+    font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  }
+  .seg{display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .seg button{
+    flex:1; appearance:none; border:0; border-right:1px solid var(--line);
+    background:var(--surface); color:var(--ink-2); font-family:var(--sans);
+    font-size:13.5px; font-weight:500; padding:9px 4px; cursor:pointer; min-width:0;
+    transition:background .12s, color .12s;
+  }
+  .seg button:last-child{border-right:0}
+  .seg button[aria-pressed="true"]{background:var(--net); color:#fff}
+  .seg button:not([aria-pressed="true"]):hover{background:var(--surface-2)}
+  .seg button:focus-visible{outline:2px solid var(--net); outline-offset:-2px}
+
+  .slider-row{display:flex; align-items:baseline; gap:10px}
+  .slider-val{
+    font-family:var(--mono); font-size:21px; font-weight:600;
+    font-variant-numeric:tabular-nums; color:var(--gross); min-width:4.6em;
+  }
+  .slider-note{font-size:12px; color:var(--muted)}
+  input[type=range]{width:100%; accent-color:var(--gross); height:22px; margin:0; cursor:pointer}
+  input[type=range]:focus-visible{outline:2px solid var(--gross); outline-offset:3px; border-radius:4px}
+  .ticks{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px; color:var(--muted); margin-top:-4px}
+  .numin{
+    font-family:var(--mono); font-size:15px; font-weight:500; font-variant-numeric:tabular-nums;
+    padding:8px 10px; border:1px solid var(--line); border-radius:8px;
+    background:var(--surface); color:var(--ink); width:100%;
+  }
+  .numin:focus-visible{outline:2px solid var(--net); outline-offset:-1px; border-color:var(--net)}
+
+  /* ---------- results ---------- */
+  .results{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:20px}
+  @media (max-width:580px){ .results{grid-template-columns:1fr} }
+  .tile{
+    border:1px solid var(--line); border-radius:12px; padding:18px 18px 16px;
+    background:var(--surface); box-shadow:var(--shadow); min-width:0;
+  }
+  .tile.hero{border-color:var(--net); background:var(--net-soft)}
+  .tlabel{
+    font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--muted); display:block; margin-bottom:8px;
+  }
+  .big{
+    font-family:var(--mono); font-weight:600; font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em; line-height:1.05; display:block;
+    font-size:clamp(28px,6.4vw,38px); overflow-wrap:anywhere;
+  }
+  .big.net{color:var(--net)} .big.gross{color:var(--gross)}
+  .sub{display:block; margin-top:7px; font-size:13px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+  .sub .mono{font-family:var(--mono)}
+
+  /* ---------- chart ---------- */
+  .legend{display:flex; gap:14px; flex-wrap:wrap}
+  .lg{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+  .swatch{width:14px; height:3px; border-radius:2px; flex:none}
+  .chart-wrap{position:relative; margin-top:12px}
+  svg.chart{display:block; width:100%; height:auto; touch-action:pan-y}
+  .tip{
+    position:absolute; pointer-events:none; z-index:5; opacity:0; transform:translate(-50%,-100%);
+    background:var(--surface); border:1px solid var(--line); border-radius:9px;
+    box-shadow:var(--shadow); padding:9px 11px; font-size:12.5px; white-space:nowrap; transition:opacity .1s;
+  }
+  .tip b{font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600}
+  .tip .r{display:flex; align-items:center; gap:7px; margin-top:4px}
+
+  /* ---------- ETF ---------- */
+  .etf-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+  @media (max-width:760px){ .etf-grid{grid-template-columns:1fr} }
+  .etf{
+    text-align:left; width:100%; font-family:inherit; cursor:pointer;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:16px; display:flex; flex-direction:column; gap:10px; min-width:0;
+    transition:border-color .12s, transform .12s;
+  }
+  .etf:hover{border-color:var(--gross)}
+  .etf:focus-visible{outline:2px solid var(--gross); outline-offset:2px}
+  .etf.best{border-color:var(--gross); background:var(--gross-soft)}
+  .etf-top{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+  .etf-y{
+    font-family:var(--mono); font-size:24px; font-weight:600; line-height:1;
+    font-variant-numeric:tabular-nums; color:var(--gross); letter-spacing:-.02em;
+  }
+  .etf-name{font-size:13.5px; font-weight:500; line-height:1.4; color:var(--ink); overflow-wrap:anywhere}
+  .etf-meta{
+    display:flex; flex-wrap:wrap; gap:4px 12px; font-family:var(--mono);
+    font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums;
+  }
+  .etf-isin{
+    font-family:var(--mono); font-size:11px; color:var(--ink-2);
+    background:var(--surface-2); border:1px solid var(--line-2);
+    padding:3px 7px; border-radius:5px; align-self:flex-start; letter-spacing:.02em;
+  }
+  .badge{
+    font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    font-family:var(--mono); padding:3px 7px; border-radius:5px; white-space:nowrap; flex:none;
+    border:1px solid currentColor;
+  }
+  .badge.high{color:var(--good)} .badge.mid{color:var(--mid)} .badge.low{color:var(--low)}
+  .etf-warn{
+    font-size:12px; line-height:1.5; color:var(--warn); background:var(--warn-soft);
+    border-radius:7px; padding:7px 9px;
+  }
+  .etf-list{
+    margin-top:14px; border:1px solid var(--line); border-radius:12px;
+    background:var(--surface); overflow:hidden;
+  }
+  .row{
+    display:grid; grid-template-columns:64px 1fr auto; align-items:center; gap:12px;
+    padding:11px 14px; border-bottom:1px solid var(--line-2); width:100%;
+    background:none; border-left:0; border-right:0; border-top:0; cursor:pointer;
+    font-family:inherit; text-align:left; color:inherit; transition:background .12s;
+  }
+  .row:last-child{border-bottom:0}
+  .row:hover{background:var(--surface-2)}
+  .row:focus-visible{outline:2px solid var(--gross); outline-offset:-2px}
+  .row[aria-current="true"]{background:var(--gross-soft)}
+  .row-y{font-family:var(--mono); font-size:15px; font-weight:600; font-variant-numeric:tabular-nums; color:var(--gross)}
+  .row-n{font-size:13.5px; min-width:0; overflow-wrap:anywhere}
+  .row-n small{display:block; font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.02em}
+  .row-p{font-family:var(--mono); font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+  @media (max-width:660px){
+    .row{grid-template-columns:58px 1fr; gap:3px 10px; padding:12px 14px}
+    .row-y{grid-row:1 / span 2; align-self:center}
+    .row-n{grid-column:2}
+    .row-p{grid-column:2; white-space:normal; font-size:11.5px}
+  }
+
+  footer{margin-top:40px; padding-top:20px; border-top:1px solid var(--line); font-size:12.5px; color:var(--muted)}
+  footer p{margin:0 0 8px}
+  footer a{color:var(--ink-2)}
+  @media (prefers-reduced-motion:reduce){ *{transition:none !important; animation:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Abgeltungsteuer · Teilfreistellung · Sparer-Pauschbetrag</p>
+  <h1>배당으로 매달 받으려면<br>원금이 얼마나 필요한가</h1>
+  <p class="lede">독일 거주자 기준. 주식형 ETF(주식 비중 51% 이상)는 배당의 30%가 면세(<code>Teilfreistellung</code>)되고, 나머지 70%에 26.375%가 부과됩니다. 부부 합산 비과세 한도 <code>2,000&thinsp;€</code>까지 반영했습니다.</p>
+
+  <hr class="rule">
+
+  <div class="panel">
+    <div class="ctrl-grid">
+      <div class="field">
+        <span class="flabel">월 수령액 · 세후</span>
+        <div class="seg" role="group" aria-label="월 수령액 선택">
+          <button type="button" data-target="1000">1,000&thinsp;€</button>
+          <button type="button" data-target="1500">1,500&thinsp;€</button>
+          <button type="button" data-target="2000">2,000&thinsp;€</button>
+        </div>
+        <label for="targetIn" class="slider-note">직접 입력 (€/월)</label>
+        <input class="numin" type="number" id="targetIn" min="100" max="20000" step="50" value="2000">
+      </div>
+
+      <div class="field">
+        <label for="yieldIn">배당률 · 세전</label>
+        <div class="slider-row">
+          <span class="slider-val" id="yieldOut">3.92%</span>
+          <span class="slider-note">연간 분배율</span>
+        </div>
+        <input type="range" id="yieldIn" min="1" max="12" step="0.01" value="3.92">
+        <div class="ticks"><span>1%</span><span>3%</span><span>5%</span><span>7%</span><span>9%</span><span>12%</span></div>
+      </div>
+
+      <div class="field">
+        <span class="flabel">비과세 한도</span>
+        <div class="seg" role="group" aria-label="비과세 한도">
+          <button type="button" data-pausch="2000">부부 2,000&thinsp;€</button>
+          <button type="button" data-pausch="1000">1인 1,000&thinsp;€</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="flabel">교회세 (바이에른 8%)</span>
+        <div class="seg" role="group" aria-label="교회세">
+          <button type="button" data-church="0">없음</button>
+          <button type="button" data-church="1">납부</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="tile hero">
+        <span class="tlabel">필요 투자원금</span>
+        <span class="big net" id="capOut">—</span>
+        <span class="sub">약 <span class="mono" id="capKrw">—</span>원 &middot; <span class="mono">1,600</span>원/€</span>
+      </div>
+      <div class="tile">
+        <span class="tlabel">필요 세전 배당</span>
+        <span class="big gross" id="grossOut">—</span>
+        <span class="sub">월 <span class="mono" id="grossMonth">—</span> &middot; 실효세율 <span class="mono" id="effOut">—</span></span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <div class="h2row">
+    <h2>배당률이 원금을 좌우합니다</h2>
+    <div class="legend">
+      <span class="lg"><span class="swatch" style="background:var(--net)"></span>월 1,000&thinsp;€</span>
+      <span class="lg"><span class="swatch" style="background:var(--gross)"></span>월 2,000&thinsp;€</span>
+    </div>
+  </div>
+  <div class="chart-wrap">
+    <svg class="chart" id="chart" viewBox="0 0 760 340" role="img" aria-label="배당률에 따른 필요 투자원금 곡선"></svg>
+    <div class="tip" id="tip" hidden></div>
+  </div>
+
+  <hr class="rule">
+
+  <div class="h2row">
+    <h2>이 배당률에 맞는 ETF</h2>
+    <span class="h2note">카드를 누르면 해당 배당률로 다시 계산합니다</span>
+  </div>
+  <div class="etf-grid" id="etfTop"></div>
+  <div class="etf-list" id="etfList"></div>
+
+  <footer>
+    <p>배당률·TER·성과는 2026년 9월 extraETF 기준이며 수시로 변합니다. 장기성과는 5년 연환산(설정 5년 미만은 설정 이후 연환산)입니다.</p>
+    <p>세율은 Abgeltungsteuer 25% + 연대세 5.5%, 주식형 ETF Teilfreistellung 30% 적용. 참고용 계산이며 투자 권유가 아닙니다. 실행 전 세무사(Steuerberater)와 상의하세요.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- data ---------------- */
+  var ETFS = [
+    { y:1.17, n:"WisdomTree Global Quality Dividend Growth", isin:"IE00BZ56RN96", ter:0.38, perf:8.24, pnote:"5년", g:"mid",  k:"배당 성장" },
+    { y:1.69, n:"Fidelity Global Quality Income",           isin:"IE00BYXVGZ48", ter:0.40, perf:11.58, pnote:"5년", g:"high", k:"퀄리티" },
+    { y:2.52, n:"Vanguard FTSE All-World High Dividend Yield", isin:"IE00B8GKDB10", ter:0.29, perf:12.70, pnote:"5년", g:"high", k:"글로벌 고배당" },
+    { y:3.05, n:"VanEck Morningstar Dev. Markets Dividend Leaders", isin:"NL0011683594", ter:0.38, perf:19.44, pnote:"5년", g:"high", k:"고배당" },
+    { y:3.11, n:"iShares Developed Markets Property Yield", isin:"IE00B1FZS350", ter:0.59, perf:0.36, pnote:"5년", g:"low", k:"리츠",
+      w:"5년 연 0.36%. 배당은 나오지만 기준가가 거의 오르지 않았습니다. 금리에 크게 좌우됩니다." },
+    { y:3.79, n:"iShares STOXX Global Select Dividend 100", isin:"DE000A0F5UH1", ter:0.46, perf:12.54, pnote:"5년", g:"high", k:"글로벌 고배당" },
+    { y:3.92, n:"SPDR S&P Global Dividend Aristocrats",     isin:"IE00B9CQXS71", ter:0.45, perf:8.15, pnote:"5년", g:"mid",  k:"배당 귀족" },
+    { y:4.30, n:"iShares EURO STOXX Select Dividend 30",    isin:"DE0002635281", ter:0.31, perf:11.49, pnote:"5년", g:"high", k:"유로존 고배당" },
+    { y:4.89, n:"iShares EM Dividend",                      isin:"IE00B652H904", ter:0.65, perf:6.58, pnote:"5년", g:"mid",  k:"신흥국",
+      w:"TER 0.65%로 높은 편이고 환율·정치 리스크가 큽니다. 비중 조절용으로 적합합니다." },
+    { y:7.46, n:"JPMorgan US Equity Premium Income Active", isin:"IE000U5MJOZ6", ter:0.35, perf:2.41, pnote:"설정 이후", g:"low", k:"커버드콜",
+      w:"2024년 10월 설정으로 이력이 짧습니다. 콜 매도로 상승분이 제한되어 강세장에서 지수를 따라가지 못합니다." },
+    { y:8.08, n:"JPMorgan Global Equity Premium Income Active", isin:"IE0003UVYC20", ter:0.35, perf:6.73, pnote:"설정 이후", g:"mid", k:"커버드콜",
+      w:"커버드콜 중에서는 기준가 방어가 나은 편입니다. 월 분배이지만 분배금이 매달 달라집니다." },
+    { y:11.51, n:"Global X NASDAQ 100 Covered Call",        isin:"IE00BM8R0J59", ter:0.45, perf:12.64, pnote:"3년", g:"low", k:"커버드콜",
+      w:"분배율이 가장 높지만 상승장에서 기준가가 뒤처집니다. 장기 보유 시 실질 분배금이 줄어들 수 있습니다." }
+  ];
+  var GLABEL = { high:"성장 양호", mid:"성장 보통", low:"성장 주의" };
+
+  /* ---------------- tax model ---------------- */
+  var TF = 0.30, FX = 1600;
+  var state = { target:2000, yield:3.92, pausch:2000, church:0 };
+
+  try{
+    var saved = JSON.parse(localStorage.getItem("divcalc") || "null");
+    if (saved && typeof saved === "object"){
+      ["target","yield","pausch","church"].forEach(function(k){
+        if (typeof saved[k] === "number" && isFinite(saved[k])) state[k] = saved[k];
+      });
+    }
+  }catch(e){}
+  function save(){ try{ localStorage.setItem("divcalc", JSON.stringify(state)); }catch(e){} }
+
+  function taxRate(church){ return 0.25 + 0.25*0.055 + (church ? 0.25*0.08 : 0); }
+  function grossNeeded(netYear, pausch, church){
+    var t = taxRate(church);
+    var g = (netYear - pausch*t) / (1 - (1-TF)*t);
+    if (g*(1-TF) <= pausch) g = netYear;
+    return g;
+  }
+  function capital(netYear, yld, pausch, church){
+    return grossNeeded(netYear, pausch, church) / (yld/100);
+  }
+
+  var nf0 = new Intl.NumberFormat("ko-KR", {maximumFractionDigits:0});
+  function eur(v){ return nf0.format(Math.round(v)) + " €"; }
+  function eurK(v){ return nf0.format(Math.round(v/1000)*1000) + " €"; }
+  function eok(v){ return (v*FX/1e8).toFixed(1) + "억"; }
+
+  /* ---------------- chart ---------------- */
+  var svgNS = "http://www.w3.org/2000/svg";
+  var CW=760, CH=340, ML=74, MR=96, MT=22, MB=52;
+  var X0=1.0, X1=12.0, YMAX=1600000;
+  var svg = document.getElementById("chart");
+  var tip = document.getElementById("tip");
+
+  function px(v){ return ML + (v - X0)/(X1 - X0) * (CW - ML - MR); }
+  function py(v){ return MT + (1 - v/YMAX) * (CH - MT - MB); }
+  function el(n, a, txt){
+    var e = document.createElementNS(svgNS, n);
+    for (var k in a) e.setAttribute(k, a[k]);
+    if (txt != null) e.textContent = txt;
+    return e;
+  }
+  function linePath(net){
+    var d = "", first = true;
+    for (var y = X0; y <= X1 + 1e-9; y += 0.05){
+      var c = capital(net, y, state.pausch, state.church);
+      if (c > YMAX){ first = true; continue; }
+      d += (first ? "M" : "L") + px(y).toFixed(1) + " " + py(c).toFixed(1) + " ";
+      first = false;
+    }
+    return d.trim();
+  }
+
+  function drawChart(){
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var cs = getComputedStyle(document.documentElement);
+    var cLine = cs.getPropertyValue("--line").trim();
+    var cMuted = cs.getPropertyValue("--muted").trim();
+    var cInk = cs.getPropertyValue("--ink").trim();
+    var cNet = cs.getPropertyValue("--net").trim();
+    var cGross = cs.getPropertyValue("--gross").trim();
+    var cSurf = cs.getPropertyValue("--surface").trim();
+
+    for (var v = 0; v <= YMAX; v += 400000){
+      svg.appendChild(el("line", {x1:ML, y1:py(v), x2:CW-MR, y2:py(v), stroke:cLine, "stroke-width":1}));
+      svg.appendChild(el("text", {x:ML-12, y:py(v)+4, "text-anchor":"end", "font-size":11,
+        "font-family":"IBM Plex Mono, monospace", fill:cMuted},
+        v === 0 ? "0" : (v/10000).toFixed(0) + "만"));
+    }
+    for (var t = 2; t <= 12; t += 2){
+      svg.appendChild(el("line", {x1:px(t), y1:CH-MB, x2:px(t), y2:CH-MB+5, stroke:cLine, "stroke-width":1}));
+      svg.appendChild(el("text", {x:px(t), y:CH-MB+20, "text-anchor":"middle", "font-size":11,
+        "font-family":"IBM Plex Mono, monospace", fill:cMuted}, t + "%"));
+    }
+
+    /* ETF rug along the axis */
+    var best = nearest();
+    ETFS.forEach(function(e){
+      var on = e === best;
+      svg.appendChild(el("circle", {cx:px(e.y), cy:CH-MB+34, r:on?4.5:3,
+        fill:on?cGross:cMuted, opacity:on?1:.5, stroke:cSurf, "stroke-width":on?2:0}));
+    });
+    svg.appendChild(el("text", {x:ML-12, y:CH-MB+38, "text-anchor":"end", "font-size":10,
+      "font-family":"IBM Plex Mono, monospace", fill:cMuted}, "ETF"));
+
+    [[1000, cNet], [2000, cGross]].forEach(function(s){
+      svg.appendChild(el("path", {d:linePath(s[0]*12), fill:"none", stroke:s[1],
+        "stroke-width":2.5, "stroke-linecap":"round", "stroke-linejoin":"round"}));
+    });
+    [[1000, cNet, "월 1,000 €"], [2000, cGross, "월 2,000 €"]].forEach(function(s){
+      var c = capital(s[0]*12, X1, state.pausch, state.church);
+      svg.appendChild(el("text", {x:CW-MR+9, y:py(c)+4, "font-size":11.5,
+        "font-family":"IBM Plex Mono, monospace", fill:s[1], "font-weight":600}, s[2]));
+    });
+
+    var yv = state.yield;
+    if (yv >= X0 && yv <= X1){
+      svg.appendChild(el("line", {x1:px(yv), y1:MT, x2:px(yv), y2:CH-MB,
+        stroke:cInk, "stroke-width":1.25, opacity:.32}));
+      [[1000, cNet], [2000, cGross]].forEach(function(s){
+        var c = capital(s[0]*12, yv, state.pausch, state.church);
+        if (c > YMAX) return;
+        svg.appendChild(el("circle", {cx:px(yv), cy:py(c), r:5.5, fill:s[1], stroke:cSurf, "stroke-width":2}));
+      });
+    }
+
+    var hit = el("rect", {x:ML, y:MT, width:CW-ML-MR, height:CH-MT-MB, fill:"transparent", style:"cursor:crosshair"});
+    svg.appendChild(hit);
+    hit.addEventListener("mousemove", onHover);
+    hit.addEventListener("mouseleave", hideTip);
+    hit.addEventListener("touchstart", onHover, {passive:true});
+    hit.addEventListener("touchmove", onHover, {passive:true});
+    hit.addEventListener("touchend", hideTip);
+  }
+
+  function onHover(ev){
+    var pt = ev.touches ? ev.touches[0] : ev;
+    var r = svg.getBoundingClientRect();
+    var sx = (pt.clientX - r.left) / r.width * CW;
+    var y = X0 + (sx - ML)/(CW - ML - MR) * (X1 - X0);
+    y = Math.max(X0, Math.min(X1, y));
+    var c1 = capital(12000, y, state.pausch, state.church);
+    var c2 = capital(24000, y, state.pausch, state.church);
+    tip.hidden = false;
+    tip.innerHTML =
+      '<b>' + y.toFixed(2) + '%</b> 세전 배당률' +
+      '<div class="r"><span class="swatch" style="background:var(--net)"></span>월 1,000 € · <b>' + eurK(c1) + '</b></div>' +
+      '<div class="r"><span class="swatch" style="background:var(--gross)"></span>월 2,000 € · <b>' + eurK(c2) + '</b></div>';
+    var left = px(y) / CW * r.width;
+    tip.style.left = Math.max(88, Math.min(r.width - 88, left)) + "px";
+    tip.style.top = (py(Math.min(c1, YMAX)) / CH * r.height - 14) + "px";
+    tip.style.opacity = 1;
+  }
+  function hideTip(){ tip.style.opacity = 0; tip.hidden = true; }
+
+  /* ---------------- ETF matching ---------------- */
+  function byDistance(){
+    return ETFS.slice().sort(function(a,b){
+      return Math.abs(a.y - state.yield) - Math.abs(b.y - state.yield);
+    });
+  }
+  function nearest(){ return byDistance()[0]; }
+
+  function drawETFs(){
+    var sorted = byDistance();
+    var top = sorted.slice(0,3);
+    var grid = document.getElementById("etfTop");
+    grid.innerHTML = "";
+
+    top.forEach(function(e, i){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "etf" + (i === 0 ? " best" : "");
+      b.setAttribute("aria-label", e.n + " · 배당률 " + e.y + "%");
+      b.innerHTML =
+        '<div class="etf-top"><span class="etf-y">' + e.y.toFixed(2) + '%</span>' +
+        '<span class="badge ' + e.g + '">' + GLABEL[e.g] + '</span></div>' +
+        '<span class="etf-name">' + e.n + '</span>' +
+        '<div class="etf-meta"><span>' + e.k + '</span><span>TER ' + e.ter.toFixed(2) + '%</span>' +
+        '<span>' + e.pnote + ' 연 ' + e.perf.toFixed(2) + '%</span></div>' +
+        '<span class="etf-isin">' + e.isin + '</span>' +
+        (e.w ? '<span class="etf-warn">' + e.w + '</span>' : '');
+      b.addEventListener("click", function(){ setYield(e.y); });
+      grid.appendChild(b);
+    });
+
+    var list = document.getElementById("etfList");
+    list.innerHTML = "";
+    ETFS.forEach(function(e){
+      var r = document.createElement("button");
+      r.type = "button";
+      r.className = "row";
+      if (e === sorted[0]) r.setAttribute("aria-current", "true");
+      r.innerHTML =
+        '<span class="row-y">' + e.y.toFixed(2) + '%</span>' +
+        '<span class="row-n">' + e.n + '<small>' + e.isin + ' &middot; ' + e.k + '</small></span>' +
+        '<span class="row-p">' + e.pnote + ' 연 ' + e.perf.toFixed(2) + '% &middot; TER ' + e.ter.toFixed(2) + '%</span>';
+      r.addEventListener("click", function(){ setYield(e.y); });
+      list.appendChild(r);
+    });
+  }
+
+  function setYield(y){
+    state.yield = y;
+    document.getElementById("yieldIn").value = y;
+    render();
+  }
+
+  /* ---------------- render ---------------- */
+  function render(){
+    var netYear = state.target * 12;
+    var g = grossNeeded(netYear, state.pausch, state.church);
+    var cap = g / (state.yield/100);
+
+    document.getElementById("capOut").textContent = eur(cap);
+    document.getElementById("capKrw").textContent = eok(cap);
+    document.getElementById("grossOut").textContent = eur(g);
+    document.getElementById("grossMonth").textContent = eur(g/12);
+    document.getElementById("effOut").textContent = ((g - netYear)/g*100).toFixed(2) + "%";
+    document.getElementById("yieldOut").textContent = state.yield.toFixed(2) + "%";
+
+    document.querySelectorAll("[data-target]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(+b.dataset.target === state.target));
+    });
+    document.querySelectorAll("[data-pausch]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(+b.dataset.pausch === state.pausch));
+    });
+    document.querySelectorAll("[data-church]").forEach(function(b){
+      b.setAttribute("aria-pressed", String(+b.dataset.church === state.church));
+    });
+
+    drawChart();
+    drawETFs();
+    save();
+  }
+
+  /* ---------------- events ---------------- */
+  document.querySelectorAll("[data-target]").forEach(function(b){
+    b.addEventListener("click", function(){
+      state.target = +b.dataset.target;
+      document.getElementById("targetIn").value = state.target;
+      render();
+    });
+  });
+  document.getElementById("targetIn").addEventListener("input", function(e){
+    var v = parseFloat(e.target.value);
+    if (isFinite(v) && v >= 50){ state.target = v; render(); }
+  });
+  document.getElementById("yieldIn").addEventListener("input", function(e){
+    state.yield = parseFloat(e.target.value); render();
+  });
+  document.querySelectorAll("[data-pausch]").forEach(function(b){
+    b.addEventListener("click", function(){ state.pausch = +b.dataset.pausch; render(); });
+  });
+  document.querySelectorAll("[data-church]").forEach(function(b){
+    b.addEventListener("click", function(){ state.church = +b.dataset.church; render(); });
+  });
+
+  document.getElementById("targetIn").value = state.target;
+  document.getElementById("yieldIn").value = state.yield;
+
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (mq.addEventListener) mq.addEventListener("change", drawChart);
+  new MutationObserver(drawChart).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  window.addEventListener("resize", hideTip);
+
+  render();
+})();
+</script>
+</body>
+</html>
