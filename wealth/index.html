@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>내 자산</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E8EBE4; --panel:#F6F7F2; --tile:#FBFBF8; --ink:#141A24; --muted:#687080;
+  --line:rgba(20,26,36,.12); --up:#D3354A; --down:#2C69D6; --coin:#C98A12; --stock:#3E5C76;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#1A2233; --panel:#212B3F; --tile:#2A3550; --ink:#EEF1F6; --muted:#98A2B5;
+    --line:rgba(238,241,246,.12); --up:#F0566A; --down:#5B8FF0; --coin:#E3A93A; --stock:#8FB0CC;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1A2233; --panel:#212B3F; --tile:#2A3550; --ink:#EEF1F6; --muted:#98A2B5;
+  --line:rgba(238,241,246,.12); --up:#F0566A; --down:#5B8FF0; --coin:#E3A93A; --stock:#8FB0CC;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);height:100%}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+  font-family:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+.app{height:100%;display:grid;grid-template-rows:auto 1fr;gap:12px;padding:14px}
+@media (min-width:900px){.app{grid-template-columns:340px 1fr;grid-template-rows:1fr;gap:18px;padding:22px}}
+
+/* summary */
+.sum{display:flex;flex-direction:column;gap:12px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.top h1{margin:0;font-size:.95rem;font-weight:500;color:var(--muted)}
+.edit{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:.85rem;cursor:pointer}
+.edit:focus-visible,.tile:focus-visible,.btn:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.total{font-size:clamp(2.1rem,10vw,2.9rem);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.total small{font-size:.5em;font-weight:500;margin-left:2px}
+.pl{font-size:1rem;font-weight:500}
+.pl .sub{color:var(--muted);font-weight:400;font-size:.85rem;margin-left:6px}
+.up{color:var(--up)} .down{color:var(--down)}
+.alloc{display:flex;flex-direction:column;gap:6px}
+.bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--line)}
+.bar i{display:block;height:100%}
+.legend{display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+.legend b{color:var(--ink);font-weight:500}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px}
+.spark{display:none}
+.stamp{font-size:.75rem;color:var(--muted)}
+.live{display:flex;align-items:center;gap:6px;font-size:.75rem;color:var(--muted)}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.live.on i{background:#2FB36B;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+.tile .lv{position:absolute;right:8px;bottom:6px;font-size:.62rem;opacity:.7}
+.lock{position:fixed;inset:0;z-index:30;background:var(--bg);display:none;align-items:center;justify-content:center;padding:24px}
+.lock.on{display:flex}
+.lockcard{width:100%;max-width:320px;display:flex;flex-direction:column;gap:12px;text-align:center}
+.lockcard h2{margin:0 0 6px;font-size:1.3rem}
+.lockicon{font-size:2rem}
+.lockcard input[type=password]{font:inherit;font-size:1rem;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-align:center}
+.rem{font-size:.85rem;color:var(--muted);display:flex;gap:6px;justify-content:center;align-items:center}
+.err{color:var(--up);font-size:.85rem;min-height:1.2em;margin:0}
+.keybox input[type=password]{font:inherit;width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--tile);color:var(--ink)}
+.keybox{border:1px dashed var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.keybox input{font:inherit;width:100%;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--tile);color:var(--ink)}
+@media (min-width:900px){
+  .sum{background:var(--panel);border-radius:14px;padding:22px;gap:18px}
+  .spark{display:block}
+  .stamp{margin-top:auto}
+}
+.spark svg{width:100%;height:70px;display:block}
+.spark p{margin:0;font-size:.8rem;color:var(--muted);line-height:1.5}
+
+/* treemap */
+.map{position:relative;min-height:0;border-radius:14px;overflow:hidden}
+.tile{position:absolute;border:0;border-radius:8px;padding:10px;text-align:left;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;transition:filter .15s}
+.tile:hover{filter:brightness(1.05)}
+.tile .nm{font-weight:700;line-height:1.2;word-break:keep-all}
+.tile .memo{font-size:.72rem;opacity:.75;margin-top:2px}
+.tile .v{font-weight:500;line-height:1.25}
+.tile .r{font-size:.8rem;opacity:.9}
+.tile .kind{position:absolute;top:8px;right:8px;width:7px;height:7px;border-radius:50%}
+
+/* sheets */
+.veil{position:fixed;inset:0;background:rgba(10,14,22,.45);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.veil.on{display:flex}
+@media (min-width:700px){.veil{align-items:center}}
+.sheet{background:var(--panel);color:var(--ink);width:100%;max-width:560px;max-height:88%;overflow:auto;
+  border-radius:16px 16px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+@media (min-width:700px){.sheet{border-radius:16px}}
+.sheet h2{margin:0 0 4px;font-size:1.25rem}
+.rows{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:14px 0 18px;font-size:.95rem}
+.rows dt{color:var(--muted)} .rows dd{margin:0;text-align:right;font-weight:500}
+.btns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--tile);border-radius:10px;padding:10px 16px;cursor:pointer;font-size:.9rem}
+.btn.primary{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:var(--tile)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.card label{display:flex;flex-direction:column;gap:3px;font-size:.72rem;color:var(--muted)}
+.card input,.card select{font:inherit;font-size:.95rem;color:var(--ink);background:var(--panel);
+  border:1px solid var(--line);border-radius:8px;padding:8px;width:100%;min-width:0}
+.card .del{border:0;background:none;color:var(--down);font-size:.8rem;cursor:pointer;padding:6px 0 0}
+.hint{font-size:.8rem;color:var(--muted);line-height:1.5;margin:6px 0 0}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);
+  background:var(--ink);color:var(--panel);padding:10px 16px;border-radius:999px;font-size:.85rem;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="sum">
+    <div class="top"><h1>총 자산</h1><button class="edit" id="editBtn" type="button">수정</button></div>
+    <div>
+      <div class="total" id="total"></div>
+      <div class="pl" id="pl"></div>
+    </div>
+    <div class="alloc">
+      <div class="bar" id="bar"></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div class="spark" id="spark"></div>
+    <div class="live" id="live"><i></i><span>가격 불러오는 중</span></div>
+    <div class="stamp" id="stamp"></div>
+  </section>
+  <section class="map" id="map" aria-label="종목별 비중"></section>
+</div>
+
+<div class="veil" id="detailVeil"><div class="sheet" id="detail" role="dialog" aria-modal="true"></div></div>
+<div class="veil" id="editVeil"><div class="sheet" role="dialog" aria-modal="true">
+  <h2>보유 자산 수정</h2>
+  <p class="hint">현재가를 바꾸면 같은 심볼(예: BTC 업비트, BTC 지갑)의 현재가도 함께 바뀌어요. 금액은 모두 원화 기준이에요.</p>
+  <div class="keybox"><label class="hint" for="fhKey">미국 주식 실시간 가격용 Finnhub API 키 (finnhub.io 무료 가입). 이 기기에만 저장돼요.</label>
+    <input id="fhKey" autocomplete="off" spellcheck="false" placeholder="API 키 붙여넣기"></div>
+  <div id="cards"></div>
+  <div class="keybox"><div class="hint"><b>사이트용 잠긴 파일 만들기</b><br>지금 내용을 비밀번호로 암호화한 index.html을 내려받아요. 내용을 바꿀 때마다 다시 만들어 올리면 돼요.</div>
+    <div class="grid" style="margin-top:8px"><input id="newPw" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" placeholder="숫자 비밀번호 (4자리 이상)"><input id="newPw2" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="new-password" placeholder="비밀번호 확인"></div>
+    <button class="btn" id="lockMake" type="button" style="margin-top:8px">잠긴 파일 내려받기</button>
+    <p class="hint" id="lockMsg"></p></div>
+  <div class="btns">
+    <button class="btn" id="addBtn" type="button">종목 추가</button>
+    <button class="btn" id="cancelBtn" type="button">취소</button>
+    <button class="btn primary" id="saveBtn" type="button">저장</button>
+  </div>
+</div></div>
+<div class="toast" id="toast"></div>
+<div class="lock" id="lock"><form class="lockcard" id="lockForm">
+  <div class="lockicon" aria-hidden="true">🔒</div>
+  <h2>내 자산</h2>
+  <input id="lockPw" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="current-password" placeholder="비밀번호" aria-label="비밀번호">
+  <label class="rem"><input type="checkbox" id="lockRemember"> 이 기기에서 기억하기</label>
+  <button class="btn primary" id="lockBtn" type="submit">열기</button>
+  <p class="err" id="lockErr" role="alert"></p>
+</form></div>
+
+<script id="state" type="application/json">{"enc":"hUWUexkjt2vtKI9XEbxHr3BHvDlF0SVoX0hnPOqVYpz7PWF4hEtKhbt9dy39HB2Eau4iAnaa1Fe2aiVB6wcCy3cK7KmC7WPtVskr9m9zXTTiL4nXL/lb8XhyYfVVpkTZfdtkrWSO/7FddRsQiKpxeXsnsrCm82GCiyc+pRWAs3kA8FxP2m2PCf66OlvhkvwPdnyDT1XkTdzQco7gSNXBaT7HlCLkuKdgY8M9GakcKyUgaocsfqo6rkNsDXiemSOQlIvPmcigHbTYfFoi9+c19Bo5Db0DcC7Ps0MB8cisad3jnIFI+Q3E9nKtSihQiU5tjglVT3x9htrEODmLzE6WjJo+V0PsFVHuidSal+KLKsN5bpR6Fa65zUAZ7erKNz8ILEvtFrWTEX01ddYxz1z+Anmkc9A4+zFaY2RncQWPmAWwy1QCKUyDVk0epDc59fYeTHaftTiQKPQQ6WpU5qnMKBBd/v9fYlDgzMEuQl6kPoChl2PW5xS0r0y3vgHZLFg1O0+vxgC6YiNidKK9XIdmdJlyr6ksTU5uPHLk3XlulQEBkPsBUAQFg0GaWAlXwUrBtAXgEx2qy4l+5VWQzGJ4GabrheXdWZlWWUcn0CcQhHl3TGE8VEx00kpiLJwdsLx5uYilsoCB9TvyW2ozyR6wMSXQRaukHcaBO0xutQLmdbC9GPyYzi9aadECLxacfmxjnIV6plNVyZSPzbAGt25zzYHaFZaCLDflnPbmrBYaJuKTfO4Zc44Ud639f8Qgm3tBXXGpxNr3Efk0xe0zqwUIelnU/fgqcrHS5fN8ahEE2p8ovDMvlkH1R9uF4wuDWDzQAaGMDIbP6lDbbNnTtyz+uhwe61C7zSe7qznsroxgFqTvcEsNAQX7Dcr2WefhmOMqolZkSoI+tK2mh+VithVMUZ1e+A+Ywxk80VsXKPNUESU3ed+/cBsa3yYNl+QvOgY3JUHRf3IqFOahvbrzryKeTWeOz78Z1y2hlStQ8PHEoBv5rAnqWllbRGSlK5srYk8FWfIjDKh6mjAPIgSdb2JggFu7VPCPpAfXwrGcRmv4oykhZtFhOSLz6aHRTVTSMFQj6rJVR8jYn5T4eBI68Y+36nZ/bD32pvtrYV2eY+sYAX5RR1GxnyjE0Gg50EGM2g9J1yZTBADdx7oYza5AlkUSpOkdxGgAkB15sqFmrdG3zW95ckpKed4s6fIN89EMchBuSionXmBXgYGurwibWDBiD61J4Eezg/LBe3eBHFfpBs6jpjJ/0DU96XFbEP/Zn/NVTVM1n9KTe2JwdCIXgyeoFvMxLWAb1oJdoxl/fRYAbWAC9uxpf94G7Uz3ntgtV040TdLzef4xQFF+1SweQm7LZTZjzCAqdwSop2/Gzk9q9i3cacRmVh9bc++EAkRB5YY/FTbBxs77F5NEyGknFYQGw+vx7AtJF3MXmou3pXXbQjvuRvQ1dx37ANE3Mr2AeoAT/c4YBbRt7dsGSLtVnBoqXOe8jE+A3By8VrKyttzdR9IO9JLu/nRVq8rAeTKEnjJpajFGyux2jHetmjFaCic/buY96q/k3sK3LU47j8f4O4XfxRHiG4PuIcXCXHsYIg3gYQ1ObzaPgBNxVeBI5lsSwDBO9jXh3KXo4A3FnrVBerTCvd96wcAPXw9BDD89TKtDvbVvw6unqXQxCkX0yNCNkSIZEbEuKmm5hTESCUrp5hkMQzq4cYnMqJ9sC+B9QYHujRwocMpkcj/YyRfcU3+vbuU4nlAk/EUoGHhRd0aX0ypZdiqwEsBhDMGZYVTTN1ZFnV9VeoB522ULpqWNDFzVTVV2Lw7XLHMarsAwHee4s2c95sKGxBixIsPGg3Om6MaV9cWcZrUq31TgPCOsog==","salt":"x8/oCH3U0jtLVqjEEf4MEw==","iv":"czPYLqcUMrDfSW/E"}</script>
+
+<script>
+const PRISTINE = '<!doctype html>\n' + document.documentElement.outerHTML;
+const KEY = 'my-assets-state';
+const $ = s => document.querySelector(s);
+const EMBED = JSON.parse($('#state').textContent);
+const PWKEY = 'my-assets-pw';
+let state = null;
+function adopt(base){
+  state = base;
+  try { const ls = JSON.parse(localStorage.getItem(KEY)); if (ls && ls.holdings && (ls.rev||0) >= (base.rev||0)) {
+    const b = Object.fromEntries(base.holdings.map(h => [h.id, h]));
+    ls.holdings.forEach(h => { const d = b[h.id]; if (d){ if (!h.src){ h.src = d.src; h.code = d.code; } if (h.row == null) h.row = d.row; } if (h.row == null) h.row = 2; });
+    state = ls; } } catch (e) {}
+}
+
+/* encryption: PBKDF2 -> AES-GCM */
+const b64 = u8 => btoa(String.fromCharCode(...u8));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(pw, salt){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt, iterations:250000, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function encryptState(obj, pw){
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, await deriveKey(pw, salt), new TextEncoder().encode(JSON.stringify(obj)));
+  return {enc: b64(new Uint8Array(ct)), salt: b64(salt), iv: b64(iv)};
+}
+async function decryptState(blob, pw){
+  const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv: unb64(blob.iv)}, await deriveKey(pw, unb64(blob.salt)), unb64(blob.enc));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+let artifactNS = null;
+(async () => { try { if (window.claude && claude.use) artifactNS = await claude.use('artifact'); } catch (e) {} })();
+
+const won = v => Math.round(v).toLocaleString('ko-KR');
+function short(v){
+  const a = Math.abs(v), s = v < 0 ? '-' : '';
+  if (a >= 1e8){ const e = Math.floor(a/1e8), m = Math.round((a%1e8)/1e4); return s + e + '억' + (m ? ' ' + m.toLocaleString('ko-KR') + '만' : ''); }
+  if (a >= 1e4) return s + Math.round(a/1e4).toLocaleString('ko-KR') + '만';
+  return s + Math.round(a).toLocaleString('ko-KR');
+}
+const pct = r => (r >= 0 ? '+' : '') + (r*100).toFixed(2) + '%';
+const sign = v => (v >= 0 ? '+' : '') + won(v);
+const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : '';
+const calc = h => { const value = h.qty*h.price, cost = h.qty*h.avg, pl = value-cost; return {value, cost, pl, r: cost ? pl/cost : 0}; };
+const today = () => new Date().toLocaleDateString('sv');
+
+function totals(){
+  let t = {value:0,cost:0,coin:0,stock:0};
+  state.holdings.forEach(h => { const c = calc(h); t.value += c.value; t.cost += c.cost; t[h.kind] += c.value; });
+  t.pl = t.value - t.cost; t.r = t.cost ? t.pl/t.cost : 0; return t;
+}
+
+function renderSummary(){
+  const t = totals();
+  $('#total').innerHTML = won(t.value) + '<small>원</small>';
+  $('#pl').innerHTML = `<span class="${cls(t.pl)}">${sign(t.pl)}원 (${pct(t.r)})</span><span class="sub">매수 ${short(t.cost)}원 대비</span>`;
+  const cp = t.value ? t.coin/t.value*100 : 0;
+  $('#bar').innerHTML = `<i style="width:${cp}%;background:var(--coin)"></i><i style="width:${100-cp}%;background:var(--stock)"></i>`;
+  $('#legend').innerHTML = `<span><i class="dot" style="background:var(--coin)"></i>코인 <b>${short(t.coin)}</b> ${cp.toFixed(0)}%</span><span><i class="dot" style="background:var(--stock)"></i>주식 <b>${short(t.stock)}</b> ${(100-cp).toFixed(0)}%</span>`;
+  $('#stamp').textContent = '마지막 업데이트 ' + state.updated;
+  const hs = state.history;
+  if (hs.length < 2){ $('#spark').innerHTML = '<p>수정 후 저장할 때마다 그날의 총액이 기록되어 여기에 추이가 그려져요.</p>'; return; }
+  const vs = hs.map(x => x.v), mn = Math.min(...vs), mx = Math.max(...vs), W = 300, H = 70;
+  const pts = vs.map((v,i) => [i/(vs.length-1)*W, H-6-((v-mn)/((mx-mn)||1))*(H-12)]);
+  const first = vs[0], last = vs[vs.length-1], col = last >= first ? 'var(--up)' : 'var(--down)';
+  $('#spark').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="총액 추이"><polyline fill="none" stroke="${col}" stroke-width="2" vector-effect="non-scaling-stroke" points="${pts.map(p=>p.join(',')).join(' ')}"/></svg><p>${hs[0].d} 이후 <span class="${cls(last-first)}">${sign(last-first)}원</span></p>`;
+}
+
+function worst(row, side){
+  const s = row.reduce((a,b)=>a+b.a,0), mx = Math.max(...row.map(r=>r.a)), mn = Math.min(...row.map(r=>r.a));
+  return Math.max(side*side*mx/(s*s), (s*s)/(side*side*mn));
+}
+function squarify(items, x, y, w, h){
+  const total = items.reduce((a,b)=>a+b.wt,0), scale = w*h/total, out = [];
+  let rest = items.map(it => ({...it, a: it.wt*scale}));
+  while (rest.length){
+    const side = Math.min(w,h); let row = [rest[0]], i = 1;
+    while (i < rest.length && worst(row.concat(rest[i]), side) <= worst(row, side)) row.push(rest[i++]);
+    const ra = row.reduce((a,b)=>a+b.a,0);
+    if (w >= h){ const th = ra/h; let yy = y; row.forEach(r => { const hh = r.a/th; out.push({...r, x, y:yy, w:th, h:hh}); yy += hh; }); x += th; w -= th; }
+    else { const th = ra/w; let xx = x; row.forEach(r => { const ww = r.a/th; out.push({...r, x:xx, y, w:ww, h:th}); xx += ww; }); y += th; h -= th; }
+    rest = rest.slice(row.length);
+  }
+  return out;
+}
+
+function renderMap(){
+  if (!state) return;
+  const map = $('#map'), W = map.clientWidth, H = map.clientHeight;
+  if (!W || !H) return;
+  const items = state.holdings.map(x => ({hold: x, ...calc(x)})).filter(x => x.value > 0).sort((a,b)=>b.value-a.value);
+  map.innerHTML = '';
+  if (!items.length){ map.innerHTML = '<p style="padding:20px;color:var(--muted)">수정 버튼을 눌러 종목을 추가하세요.</p>'; return; }
+  const gap = 3, sum = items.reduce((a,b)=>a+b.value,0);
+  const pos = new Map(state.holdings.map((h,i) => [h.id,i]));
+  items.sort((a,b) => ((a.hold.row||0)-(b.hold.row||0)) || (pos.get(a.hold.id)-pos.get(b.hold.id)));
+  const rowsMap = new Map(); items.forEach(x => { const r = x.hold.row||0; if (!rowsMap.has(r)) rowsMap.set(r, []); rowsMap.get(r).push(x); });
+  const rowsArr = [...rowsMap.values()];
+  const rh = rowsArr.map(r => Math.max(r.reduce((a,b)=>a+b.value,0)/sum, 0.2)), rhs = rh.reduce((a,b)=>a+b,0);
+  const tiles = []; let y = 0;
+  rowsArr.forEach((r,ri) => {
+    const hh = H*rh[ri]/rhs, rs = r.reduce((a,b)=>a+b.value,0) || 1;
+    const ww = r.map(x => Math.max(x.value/rs, 0.22)), wsum = ww.reduce((a,b)=>a+b,0); let x0 = 0;
+    r.forEach((x,k) => { const w = W*ww[k]/wsum; tiles.push({...x, x:x0, y, w, h:hh}); x0 += w; });
+    y += hh;
+  });
+  tiles.forEach(t => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tile';
+    const w = t.w-gap, h = t.h-gap;
+    Object.assign(b.style, {left:t.x+gap/2+'px', top:t.y+gap/2+'px', width:w+'px', height:h+'px'});
+    const mag = Math.min(Math.abs(t.r)/0.5, 1), p = Math.abs(t.r) < 0.003 ? 0 : 22 + 58*mag;
+    b.style.background = p ? `color-mix(in oklab, ${t.r>0?'var(--up)':'var(--down)'} ${p}%, var(--tile))` : 'var(--tile)';
+    b.style.color = p > 48 ? '#fff' : 'var(--ink)';
+    const area = w*h, big = Math.min(Math.max(Math.sqrt(area)/9, 12), 30);
+    const kindDot = `<span class="kind" style="background:var(--${t.hold.kind})"></span>`;
+    const nm = t.hold.name.length > 8 ? t.hold.sym : t.hold.name;
+    if (w < 150 || h < 100){
+      const fs = w < 90 ? 11 : 13;
+      b.style.padding = '7px';
+      b.innerHTML = `${kindDot}<div class="nm" style="font-size:${fs}px">${nm}</div><div><div class="v" style="font-size:${fs+1}px">${short(t.value)}원</div><div class="r" style="font-size:${fs-1}px">${pct(t.r)}</div></div>`;
+    } else {
+      b.innerHTML = `${kindDot}<div><div class="nm" style="font-size:${Math.min(big*.62,20)}px">${t.hold.name}</div><div class="memo">${t.hold.memo||''}</div></div>
+        <div><div class="v" style="font-size:${big}px">${short(t.value)}원</div><div class="r">${sign(t.pl)}원 (${pct(t.r)})</div></div>`;
+    }
+    if ((t.hold.src||'manual') !== 'manual' && !liveOk[t.hold.id] && w >= 90) b.insertAdjacentHTML('beforeend','<span class="lv">저장된 가격</span>');
+    b.setAttribute('aria-label', `${t.hold.name} ${t.hold.memo||''} ${short(t.value)}원 ${pct(t.r)}`);
+    b.onclick = () => showDetail(t.hold);
+    map.appendChild(b);
+  });
+}
+
+function showDetail(h){
+  const c = calc(h), t = totals();
+  $('#detail').innerHTML = `<h2>${h.name}</h2><div class="stamp">${h.memo||''} ${h.kind==='coin'?'코인':'주식'}</div>
+  <dl class="rows">
+    <dt>평가금액</dt><dd>${won(c.value)}원</dd>
+    <dt>수익</dt><dd class="${cls(c.pl)}">${sign(c.pl)}원 (${pct(c.r)})</dd>
+    <dt>보유 수량</dt><dd>${h.qty.toLocaleString('ko-KR',{maximumFractionDigits:8})}</dd>
+    <dt>평균단가</dt><dd>${won(h.avg)}원</dd>
+    <dt>현재가</dt><dd>${won(h.price)}원</dd>
+    <dt>가격 출처</dt><dd>${srcLabel(h)}</dd>
+    <dt>매수금액</dt><dd>${won(c.cost)}원</dd>
+    <dt>전체 비중</dt><dd>${(c.value/t.value*100).toFixed(1)}%</dd>
+  </dl><div class="btns"><button class="btn primary" type="button" id="closeDetail">닫기</button></div>`;
+  $('#detailVeil').classList.add('on');
+  $('#closeDetail').onclick = () => $('#detailVeil').classList.remove('on');
+}
+$('#detailVeil').onclick = e => { if (e.target.id === 'detailVeil') e.currentTarget.classList.remove('on'); };
+
+/* editor */
+let draft = [];
+const num = s => { const n = parseFloat(String(s).replace(/,/g,'')); return isNaN(n) ? 0 : n; };
+function field(label, key, val, mode){ return `<label>${label}<input data-k="${key}" inputmode="${mode||'decimal'}" value="${val}"></label>`; }
+function renderCards(){
+  $('#cards').innerHTML = draft.map((h,i) => `<div class="card" data-i="${i}">
+    <div class="grid">
+      ${field('이름','name',h.name,'text')}${field('메모 (보관처)','memo',h.memo||'','text')}
+      ${field('심볼','sym',h.sym,'text')}
+      <label>분류<select data-k="kind"><option value="coin"${h.kind==='coin'?' selected':''}>코인</option><option value="stock"${h.kind==='stock'?' selected':''}>주식</option></select></label>
+      ${field('줄 (0=맨 위)','row',h.row??2)}${field('수량','qty',h.qty)}${field('평균단가 (원)','avg',won(h.avg))}
+      ${field('현재가 (원, 수동일 때)','price',won(h.price))}
+      <label>가격 출처<select data-k="src">${[['upbit','업비트 (코인)'],['us','미국 주식'],['kr','국내 주식'],['manual','수동 입력']].map(([v,l])=>`<option value="${v}"${(h.src||'manual')===v?' selected':''}>${l}</option>`).join('')}</select></label>
+      ${field('코드 (KRW-BTC / QQQM / 475720)','code',h.code||'','text')}
+    </div><button class="del" type="button">이 종목 삭제</button></div>`).join('');
+}
+$('#cards').addEventListener('input', e => {
+  const card = e.target.closest('.card'); if (!card) return;
+  const i = +card.dataset.i, k = e.target.dataset.k, h = draft[i];
+  h[k] = ['qty','avg','price','row'].includes(k) ? num(e.target.value) : e.target.value;
+  if (k === 'price') draft.forEach((o,j) => { if (j !== i && o.sym && o.sym === h.sym){ o.price = h.price;
+    const inp = $(`.card[data-i="${j}"] input[data-k="price"]`); if (inp) inp.value = e.target.value; } });
+});
+$('#cards').addEventListener('change', e => { const k = e.target.dataset.k; if (k === 'kind' || k === 'src'){ draft[+e.target.closest('.card').dataset.i][k] = e.target.value; } });
+$('#cards').addEventListener('click', e => { if (e.target.classList.contains('del')){ draft.splice(+e.target.closest('.card').dataset.i,1); renderCards(); } });
+$('#editBtn').onclick = () => { $('#fhKey').value = lsGet(FHKEY) || ''; draft = JSON.parse(JSON.stringify(state.holdings)); renderCards(); $('#editVeil').classList.add('on'); };
+$('#cancelBtn').onclick = () => $('#editVeil').classList.remove('on');
+$('#addBtn').onclick = () => { draft.push({id:'h'+Date.now(), name:'새 종목', sym:'', memo:'', kind:'stock', row:2, src:'manual', code:'', qty:0, avg:0, price:0}); renderCards();
+  $('#cards').lastElementChild.scrollIntoView({behavior:'smooth', block:'center'}); };
+$('#saveBtn').onclick = async () => {
+  lsSet(FHKEY, $('#fhKey').value.trim());
+  state.holdings = draft.filter(h => h.name.trim()).map((h,i)=>({...h,_i:i})).sort((a,b)=>(a.row-b.row)||(a._i-b._i)).map(({_i,...h})=>h);
+  state.rev = (state.rev||1) + 1; state.updated = today();
+  const v = Math.round(totals().value), last = state.history[state.history.length-1];
+  if (last && last.d === state.updated) last.v = v; else state.history.push({d:state.updated, v});
+  $('#editVeil').classList.remove('on'); render();
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  if (!artifactNS){ toast('이 기기에 저장했어요'); return; }
+  const json = JSON.stringify(state).replace(/</g,'\\u003c');
+  const html = PRISTINE.replace(/(<script id="state" type="application\/json">)[\s\S]*?(<\/script>)/, (m,a,b) => a + json + b);
+  try { await artifactNS.publish(html); toast('저장했어요'); } catch (e) { toast('이 기기에만 저장했어요'); }
+};
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 2200); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.veil.on').forEach(v => v.classList.remove('on')); });
+
+/* live prices */
+const FHKEY = 'my-assets-finnhub';
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+const liveOk = {};   // id -> true when last fetch succeeded
+let usdkrw = null, fxAt = 0, tick = 0;
+function srcLabel(h){
+  const n = {upbit:'업비트', us:'미국 주식 (Finnhub)', kr:'국내 주식 (네이버)', manual:'수동 입력'}[h.src||'manual'];
+  return h.src && h.src !== 'manual' ? n + (liveOk[h.id] ? ' 실시간' : ' 연결 안 됨') : n;
+}
+async function getJSON(u){ const r = await fetch(u, {cache:'no-store'}); if (!r.ok) throw new Error(r.status); return r.json(); }
+function setPrice(filter, price){
+  state.holdings.forEach(h => { if (filter(h)){ h.price = price; liveOk[h.id] = true; } });
+}
+async function pullUpbit(){
+  const codes = [...new Set(state.holdings.filter(h => h.src==='upbit' && h.code).map(h => h.code))];
+  if (!codes.length) return;
+  const d = await getJSON('https://api.upbit.com/v1/ticker?markets=' + codes.join(','));
+  d.forEach(t => setPrice(h => h.src==='upbit' && h.code===t.market, t.trade_price));
+}
+async function pullFx(){
+  if (usdkrw && Date.now()-fxAt < 3600e3) return;
+  const d = await getJSON('https://open.er-api.com/v6/latest/USD');
+  if (d && d.rates && d.rates.KRW){ usdkrw = d.rates.KRW; fxAt = Date.now(); }
+}
+async function pullUS(){
+  const key = lsGet(FHKEY), codes = [...new Set(state.holdings.filter(h => h.src==='us' && h.code).map(h => h.code))];
+  if (!key || !codes.length) return;
+  await pullFx(); if (!usdkrw) return;
+  await Promise.all(codes.map(async c => {
+    const q = await getJSON(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(c)}&token=${encodeURIComponent(key)}`);
+    if (q && q.c > 0) setPrice(h => h.src==='us' && h.code===c, q.c*usdkrw);
+  }));
+}
+async function pullKR(){
+  const codes = [...new Set(state.holdings.filter(h => h.src==='kr' && h.code).map(h => h.code))];
+  await Promise.all(codes.map(async c => {
+    const d = await getJSON('https://polling.finance.naver.com/api/realtime/domestic/stock/' + c);
+    const p = d && d.datas && d.datas[0] && num(d.datas[0].closePrice);
+    if (p > 0) setPrice(h => h.src==='kr' && h.code===c, p);
+  }));
+}
+async function refresh(){
+  const jobs = [pullUpbit()];
+  if (tick % 4 === 0) jobs.push(pullUS(), pullKR());   // stocks every ~60s, coins every 15s
+  tick++;
+  await Promise.allSettled(jobs);
+  const liveN = Object.keys(liveOk).length;
+  const el = $('#live');
+  el.classList.toggle('on', liveN > 0);
+  el.querySelector('span').textContent = liveN
+    ? '실시간 ' + new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) + ' 갱신'
+    : '실시간 연결 안 됨 (저장된 가격 표시)';
+  if (liveN){
+    const v = Math.round(totals().value), d = today(), last = state.history[state.history.length-1];
+    if (last && last.d === d) last.v = v; else state.history.push({d, v});
+    state.updated = d;
+    lsSet(KEY, JSON.stringify(state));
+  }
+  render();
+}
+function render(){ renderSummary(); renderMap(); }
+new ResizeObserver(renderMap).observe($('#map'));
+function start(base){
+  adopt(base);
+  $('#lock').classList.remove('on');
+  render(); refresh();
+  setInterval(() => { if (!document.hidden) refresh(); }, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+}
+async function tryUnlock(pw, remember){
+  try {
+    const base = await decryptState(EMBED, pw);
+    if (remember) lsSet(PWKEY, pw); else try { localStorage.removeItem(PWKEY); } catch(e){}
+    start(base); return true;
+  } catch (e) { return false; }
+}
+$('#lockForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const btn = $('#lockBtn'); btn.disabled = true; btn.textContent = '확인 중';
+  const ok = await tryUnlock($('#lockPw').value, $('#lockRemember').checked);
+  btn.disabled = false; btn.textContent = '열기';
+  if (!ok){ $('#lockErr').textContent = '비밀번호가 맞지 않아요'; $('#lockPw').select(); }
+});
+(async () => {
+  if (!EMBED.enc) return start(EMBED);
+  if (!window.crypto || !crypto.subtle){ $('#lockErr').textContent = '이 브라우저에서는 열 수 없어요 (https 주소로 접속해 주세요)'; }
+  const saved = lsGet(PWKEY);
+  if (saved && await tryUnlock(saved, true)) return;
+  $('#lock').classList.add('on'); $('#lockPw').focus();
+})();
+
+/* build locked file for the website */
+$('#lockMake').onclick = async () => {
+  const p1 = $('#newPw').value, p2 = $('#newPw2').value, msg = $('#lockMsg');
+  if (!/^\d{4,}$/.test(p1)){ msg.textContent = '비밀번호는 숫자 4자리 이상으로 해 주세요'; return; }
+  if (p1 !== p2){ msg.textContent = '두 비밀번호가 달라요'; return; }
+  if (!window.crypto || !crypto.subtle){ msg.textContent = '이 브라우저에서는 암호화를 할 수 없어요. PC의 Chrome으로 열어 주세요'; return; }
+  const snap = {...state, rev: (state.rev||1) + 1};
+  const json = JSON.stringify(await encryptState(snap, p1));
+  const html = PRISTINE.replace(/(<script id="state" type="application\/json">)[\s\S]*?(<\/script>)/, (m,a,b) => a + json + b);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], {type:'text/html'}));
+  a.download = 'index.html'; document.body.appendChild(a); a.click(); a.remove();
+  state.rev = snap.rev; lsSet(KEY, JSON.stringify(state));
+  msg.textContent = 'index.html을 내려받았어요. 이 파일을 dkmakes.com/wealth에 올리세요.';
+};
+</script>
+</body>
+</html>
