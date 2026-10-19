@@ -1,0 +1,32 @@
+name: wealth prices
+
+on:
+  schedule:
+    - cron: '*/15 0-7 * * 1-5'    # 한국장 (KST 09:00–16:59)
+    - cron: '*/15 13-21 * * 1-5'  # 미국장 (ET 09:30–16:00)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: wealth-prices
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node .github/scripts/wealth-prices.mjs
+      - name: Commit if prices changed
+        run: |
+          old=$(git show HEAD:wealth/prices.json 2>/dev/null | jq -Sc 'del(.t)' || true)
+          new=$(jq -Sc 'del(.t)' wealth/prices.json)
+          if [ "$old" = "$new" ]; then echo "prices unchanged"; exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898283+github-actions[bot]@users.noreply.github.com'
+          git add wealth/prices.json
+          git commit -m 'Update wealth prices'
+          git push
