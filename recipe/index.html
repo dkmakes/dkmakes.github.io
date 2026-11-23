@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Recipe Box</title>
+<meta name="description" content="Our family recipe box: searchable recipes with grams and an amount scaler.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥄</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f3f5f4; --surface:#ffffff; --ink:#17201d; --muted:#5d6a65; --line:#dce3e0;
+  --accent:#1f6f5c; --accent-soft:#e1f0eb; --yolk:#f2b632; --yolk-soft:#fdf1d3;
+  --display:"Bricolage Grotesque", "Noto Sans KR", system-ui, sans-serif;
+  --body:"Noto Sans KR", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#111715; --surface:#1a2320; --ink:#e8efec; --muted:#9aa8a2; --line:#2b3632;
+    --accent:#5cc2a6; --accent-soft:#1d3a32; --yolk:#f2c14e; --yolk-soft:#3a3120;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yolk);outline-offset:2px;border-radius:8px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+
+header.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:16px 0 10px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.brand h1{font-family:var(--display);font-weight:800;font-size:1.6rem;margin:0;letter-spacing:-.01em}
+.brand .count{color:var(--muted);font-size:.9rem}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--muted)}
+#q{width:100%;padding:13px 40px 13px 42px;border:1.5px solid var(--line);border-radius:12px;background:var(--surface);font-size:1rem}
+#q:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+#clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);font-size:1.3rem;padding:4px 8px;cursor:pointer;display:none}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:.9rem;cursor:pointer;white-space:nowrap}
+.chip .n{color:var(--muted);margin-left:4px;font-variant-numeric:tabular-nums}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chip[aria-pressed="true"] .n{color:inherit;opacity:.8}
+
+main{padding:18px 0 48px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.card{display:flex;flex-direction:column;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;border-left:5px solid var(--c, var(--accent))}
+.card:hover{border-color:var(--accent);border-left-color:var(--c, var(--accent))}
+.cat{font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.card h2{font-family:var(--display);font-weight:600;font-size:1.2rem;line-height:1.25;margin:0;text-wrap:balance}
+.card .ko{color:var(--muted);font-size:.9rem;margin-top:2px}
+.card-top{display:flex;gap:14px;align-items:center}
+.card-title{display:flex;flex-direction:column;gap:2px;min-width:0}
+.art svg{width:68px;height:68px;display:block;flex:none}
+.d-head{display:flex;gap:18px;align-items:center}
+.d-art svg{width:128px;height:128px;display:block}
+@media (max-width:480px){.d-head{flex-direction:column;align-items:flex-start;gap:8px}.d-art svg{width:104px;height:104px}}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
+.fact{font-size:.8rem;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--ink)}
+.fact.chill{background:var(--yolk-soft)}
+.match{font-size:.82rem;color:var(--muted)}
+mark{background:var(--yolk-soft);color:inherit;border-radius:3px;padding:0 2px}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+
+#detail{display:none}
+body.reading #list,body.reading header.top{display:none}
+body.reading #detail{display:block}
+.back{display:inline-flex;align-items:center;gap:6px;border:0;background:none;color:var(--accent);font-weight:700;padding:16px 0 8px;cursor:pointer}
+.d-head h2{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,5vw,2.3rem);line-height:1.15;margin:4px 0 2px;text-wrap:balance}
+.d-head .ko{color:var(--muted)}
+.d-head .src{font-size:.9rem;color:var(--muted);margin:8px 0 0}
+.d-head .src a{color:var(--accent)}
+.key{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:18px 0}
+.key > div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.key b{display:block;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.key .hot{border-color:var(--accent)}
+.key .cold{border-color:var(--yolk)}
+
+.key .scaler{border:2px solid var(--accent);grid-column:1/-1}
+.scale-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.stepper{display:flex;align-items:center;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.stepper button{border:0;background:none;width:44px;height:44px;font-size:1.4rem;cursor:pointer;color:var(--accent);font-weight:700}
+.stepper button:hover{background:var(--accent-soft)}
+.stepper input{width:64px;height:44px;border:0;border-left:1.5px solid var(--line);border-right:1.5px solid var(--line);text-align:center;font-size:1.15rem;font-weight:700;background:var(--surface);font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.unit{font-weight:700}
+.unit small{color:var(--muted);font-weight:400}
+.presets{display:flex;gap:6px}
+.presets button{border:1.5px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-size:.85rem;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.factor{font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.factor b{display:inline;color:var(--accent);font-size:inherit;letter-spacing:0;text-transform:none}
+.warn{margin-top:10px;background:var(--yolk-soft);border-left:4px solid var(--yolk);border-radius:8px;padding:8px 12px;font-size:.9rem}
+
+.cols{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:start}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+section h3{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:8px 0 10px}
+section h4{font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:16px 0 6px}
+.ing{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ing label{display:flex;gap:10px;align-items:flex-start;padding:7px 8px;border-radius:8px;cursor:pointer}
+.ing label:hover{background:var(--accent-soft)}
+.ing input{margin-top:5px;accent-color:var(--accent);width:17px;height:17px;flex:none}
+.ing input:checked + span{color:var(--muted);text-decoration:line-through}
+.g{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);white-space:nowrap}
+.q{font-variant-numeric:tabular-nums;font-weight:700}
+body.scaled .q{background:var(--yolk-soft);border-radius:4px;padding:0 3px}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:12px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:10px;max-width:65ch}
+.steps li::before{content:counter(s);font-family:var(--display);font-weight:800;color:var(--accent);background:var(--accent-soft);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:.9rem}
+.notes{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.notes ul{margin:0;padding-left:18px;display:grid;gap:6px}
+footer{color:var(--muted);font-size:.85rem;text-align:center;padding:8px 0 32px}
+@media (prefers-reduced-motion:no-preference){.card{transition:border-color .15s}}
+@media print{header.top,.back,.stepper,.presets,footer{display:none}.key .scaler{border-width:1px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><h1>Our Recipe Box</h1><span class="count" id="count"></span></div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Search recipes or ingredients · 레시피·재료 검색" autocomplete="off" aria-label="Search recipes or ingredients">
+      <button id="clear" type="button" aria-label="Clear search">×</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by category"></div>
+  </div>
+</header>
+
+<main class="wrap" id="list">
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No recipes match. Try an ingredient, like “butter” or “고추기름”.</p>
+</main>
+
+<main class="wrap" id="detail"></main>
+
+<footer class="wrap">Measures: original cups and spoons, with grams in brackets. US all-purpose flour = Type 550. When you change the amount, weigh in grams for accuracy.</footer>
+
+<script src="recipes.js?v=1"></script>
+<script>
+function artFor(r){ const key = ART[r.art] ? r.art : CAT_ART[r.cat]; return `<svg viewBox="0 0 120 120" aria-hidden="true">${ART[key]}</svg>`; }
+
+/* ---------- Scaling ---------- */
+const FRACS = {"1/8":"⅛","1/4":"¼","1/3":"⅓","3/8":"⅜","1/2":"½","5/8":"⅝","2/3":"⅔","3/4":"¾","7/8":"⅞"};
+function gcd(a,b){ return b ? gcd(b, a % b) : a; }
+function fmtFraction(x, dens){
+  if(x <= 0) return "0";
+  let best = null;
+  for(const d of dens){
+    const n = Math.round(x * d);
+    const err = Math.abs(x - n / d);
+    if(best === null || err < best.err - 1e-9) best = {n, d, err};
+  }
+  let {n, d} = best;
+  if(n === 0){ n = 1; d = Math.max(...dens); }
+  const whole = Math.floor(n / d), rem = n % d;
+  if(rem === 0) return String(whole);
+  const g = gcd(rem, d), key = (rem/g) + "/" + (d/g);
+  return (whole ? whole : "") + (FRACS[key] || ("" + (rem/g) + "/" + (d/g)));
+}
+function fmtGrams(x){
+  if(x >= 10) return String(Math.round(x));
+  const r = Math.round(x * 10) / 10;
+  return String(r).replace(/\.0$/, "");
+}
+/* A volume marker is read together with the unit word after it, so small amounts can
+   step down (cup → tablespoon → teaspoon) and the unit word agrees with the number. */
+const SPOON = {cup:{dens:[2,3,4,8], down:"tablespoon", per:16, min:0.25},
+               tablespoon:{dens:[2,3,4], down:"teaspoon", per:3, min:1},
+               teaspoon:{dens:[2,4,8]},
+               ounce:{dens:[2,4]}};
+const MARK = /\[\[([vng]):([\d.]+(?:-[\d.]+)?)\]\]((?:\s+(?:large\s+)?)(cups?|tablespoons?|teaspoons?|ounces?|eggs?|sachets?)\b)?/g;
+function unitWord(base, plural){ return plural ? base + "s" : base; }
+function toNum(s){
+  const m = s.match(/^(\d*)([½⅓⅔¼¾⅛⅜⅝⅞]?)$/);
+  if(!m) return parseFloat(s);
+  const map = {"½":.5,"⅓":1/3,"⅔":2/3,"¼":.25,"¾":.75,"⅛":.125,"⅜":.375,"⅝":.625,"⅞":.875};
+  return (m[1] ? Number(m[1]) : 0) + (m[2] ? map[m[2]] : 0);
+}
+function render(kind, raw, f, gap, word, html){
+  let vals = raw.split("-").map(Number).map(v => v * f);
+  let unit = word ? word.replace(/s$/, "") : "";
+  let dens = kind === "n" ? [2] : [2,3,4,8];
+  if(kind === "v" && SPOON[unit]){
+    while(SPOON[unit] && SPOON[unit].down && Math.max(...vals) < SPOON[unit].min - 1e-9){
+      vals = vals.map(v => v * SPOON[unit].per); unit = SPOON[unit].down;
+    }
+    dens = SPOON[unit].dens;
+  }
+  const txt = vals.map(v => kind === "g" ? fmtGrams(v) : fmtFraction(v, dens)).join("–");
+  const plural = vals.length > 1 || toNum(txt) > 1;
+  const num = kind === "g" ? txt + " g" : txt;
+  const tail = word ? gap + unitWord(unit, plural) : "";
+  if(!html) return num + tail;
+  return (kind === "g" ? `<span class="g">${num}</span>` : `<span class="q">${num}</span>`) + tail;
+}
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const gapOf = (m, word) => m ? m.slice(0, m.length - word.length) : "";
+function plain(text){ return text.replace(MARK, (_, k, raw, m, word) => render(k, raw, 1, gapOf(m, word), word, false)); }
+function rich(text, f){ return esc(text).replace(MARK, (_, k, raw, m, word) => render(k, raw, f, gapOf(m, word), word, true)); }
+
+/* ---------- List ---------- */
+const $ = s => document.querySelector(s);
+const norm = s => s.toLowerCase().normalize("NFC");
+let cat = "All", q = "";
+const amounts = {};
+
+function allIngredients(r){ return r.groups.flatMap(g => g.items).map(plain); }
+function hay(r){ return norm([r.title, r.ko, r.sub||"", r.cat, CATS[r.cat].ko, ...allIngredients(r)].join(" | ")); }
+function hl(text, term){
+  const t = esc(text);
+  if(!term) return t;
+  const i = norm(text).indexOf(term);
+  if(i < 0) return t;
+  return esc(text.slice(0,i)) + "<mark>" + esc(text.slice(i, i+term.length)) + "</mark>" + esc(text.slice(i+term.length));
+}
+
+function renderChips(){
+  const counts = {All: RECIPES.length};
+  RECIPES.forEach(r => counts[r.cat] = (counts[r.cat]||0) + 1);
+  const keys = ["All", ...Object.keys(CATS).filter(k => counts[k])];
+  $("#chips").innerHTML = keys.map(k => {
+    const label = k === "All" ? "All · 전체" : `${k} · ${CATS[k].ko}`;
+    return `<button type="button" class="chip" data-cat="${k}" aria-pressed="${k===cat}">${label}<span class="n">${counts[k]}</span></button>`;
+  }).join("");
+}
+
+function renderList(){
+  const term = norm(q.trim());
+  const list = RECIPES.filter(r => (cat==="All" || r.cat===cat) && (!term || hay(r).includes(term)));
+  $("#count").textContent = `${RECIPES.length} recipes`;
+  $("#empty").hidden = list.length > 0;
+  $("#grid").innerHTML = list.map(r => {
+    let match = "";
+    if(term && !norm(r.title + r.ko + (r.sub||"")).includes(term)){
+      const hit = allIngredients(r).find(i => norm(i).includes(term));
+      if(hit) match = `<div class="match">Uses: ${hl(hit, term)}</div>`;
+    }
+    const oven = r.preheat === "None" ? "" : `<span class="fact">Oven ${esc(r.preheat.split(/[,(:;]/)[0].trim())}</span>`;
+    const chill = /^none/i.test(r.chill) ? "" : `<span class="fact chill">Chill</span>`;
+    return `<button type="button" class="card" data-id="${r.id}" style="--c:${CATS[r.cat].c}">
+      <div class="card-top"><span class="art">${artFor(r)}</span><div class="card-title">
+      <span class="cat">${r.cat} · ${CATS[r.cat].ko}</span>
+      <h2>${hl(r.title, term)}</h2>
+      <div class="ko">${hl(r.ko, term)}${r.sub ? " · " + hl(r.sub, term) : ""}</div></div></div>
+      <div class="facts"><span class="fact">${r.base} ${esc(r.unit.en)} · ${r.base}${esc(r.unit.ko)}</span>${oven}${chill}</div>
+      ${match}
+    </button>`;
+  }).join("");
+}
+
+/* ---------- Detail ---------- */
+function renderDetail(r){
+  const n = amounts[r.id] || r.base;
+  const f = n / r.base;
+  document.body.classList.toggle("scaled", f !== 1);
+  document.title = `${r.title} · Our Recipe Box`;
+  const src = r.source.url ? `Adapted from <a href="${r.source.url}" target="_blank" rel="noopener">${esc(r.source.name)}</a>` : esc(r.source.name);
+  const groups = r.groups.map((g, gi) => `${g.name ? `<h4>${esc(g.name)}</h4>` : ""}<ul class="ing">${g.items.map((it, ii) =>
+    `<li><label for="i-${gi}-${ii}"><input type="checkbox" id="i-${gi}-${ii}"><span>${rich(it, f)}</span></label></li>`).join("")}</ul>`).join("");
+  const presets = [0.5, 1, 2].map(p => {
+    const v = Math.max(1, Math.round(r.base * p));
+    const label = p === 0.5 ? "½×" : p + "×";
+    return `<button type="button" data-n="${v}" aria-pressed="${v === n}">${label}</button>`;
+  }).join("");
+  const factor = f === 1 ? "Original amount" : `<b>×${(Math.round(f*100)/100).toString()}</b> of the original (${r.base} ${esc(r.unit.en)})`;
+  const warn = f !== 1 && r.scaleNote ? `<div class="warn">${esc(r.scaleNote)}</div>` : "";
+
+  $("#detail").innerHTML = `
+    <button type="button" class="back" id="back">← All recipes</button>
+    <div class="d-head"><span class="d-art">${artFor(r)}</span><div>
+      <span class="cat" style="color:${CATS[r.cat].c}">${r.cat} · ${CATS[r.cat].ko}</span>
+      <h2>${esc(r.title)}</h2>
+      <div class="ko">${esc(r.ko)}${r.sub ? " · " + esc(r.sub) : ""}</div>
+      <p class="src">${src}</p>
+    </div></div>
+    <div class="key">
+      <div class="scaler">
+        <b>How many? · 얼마나 만들까요?</b>
+        <div class="scale-row">
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="Fewer">−</button>
+            <input id="amt" type="number" inputmode="numeric" min="1" max="999" step="1" value="${n}" aria-label="Amount in ${esc(r.unit.en)}">
+            <button type="button" id="plus" aria-label="More">+</button>
+          </div>
+          <span class="unit">${esc(r.unit.ko)} <small>${esc(r.unit.en)}</small></span>
+          <div class="presets" id="presets">${presets}</div>
+        </div>
+        <div class="factor">${factor}${r.makesNote && r.makesNote !== "about" ? " · " + esc(r.makesNote.replace(/,$/, "")) : ""}</div>
+        ${warn}
+      </div>
+      <div class="${r.preheat==="None"?"":"hot"}"><b>Preheat</b>${esc(r.preheat)}</div>
+      <div class="${/^none/i.test(r.chill)?"":"cold"}"><b>Chill</b>${esc(r.chill)}</div>
+    </div>
+    <div class="cols">
+      <section><h3>Ingredients</h3>${groups}</section>
+      <section><h3>Method</h3><ol class="steps">${r.steps.map(s => `<li><span>${rich(s, f)}</span></li>`).join("")}</ol>
+        ${r.notes.length ? `<div class="notes"><h3>Notes</h3><ul>${r.notes.map(x => `<li>${rich(x, f)}</li>`).join("")}</ul></div>` : ""}
+      </section>
+    </div>`;
+
+  const set = v => {
+    v = Math.round(Number(v));
+    if(!isFinite(v) || v < 1) v = 1;
+    if(v > 999) v = 999;
+    amounts[r.id] = v;
+    const checked = [...document.querySelectorAll(".ing input")].map(c => c.checked);
+    renderDetail(r);
+    document.querySelectorAll(".ing input").forEach((c, i) => c.checked = !!checked[i]);
+  };
+  $("#back").addEventListener("click", () => { location.hash = ""; });
+  $("#minus").addEventListener("click", () => set(n - 1));
+  $("#plus").addEventListener("click", () => set(n + 1));
+  $("#amt").addEventListener("change", e => set(e.target.value));
+  $("#amt").addEventListener("keydown", e => { if(e.key === "Enter") e.target.blur(); });
+  $("#presets").addEventListener("click", e => { const b = e.target.closest("button"); if(b) set(b.dataset.n); });
+}
+
+function route(){
+  const id = location.hash.replace(/^#/, "");
+  const r = RECIPES.find(x => x.id === id);
+  if(r){ renderDetail(r); document.body.classList.add("reading"); window.scrollTo(0,0); }
+  else { document.body.classList.remove("reading", "scaled"); document.title = "Our Recipe Box"; }
+}
+
+$("#chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip"); if(!b) return;
+  cat = b.dataset.cat; renderChips(); renderList();
+});
+$("#grid").addEventListener("click", e => {
+  const c = e.target.closest(".card"); if(c) location.hash = c.dataset.id;
+});
+$("#q").addEventListener("input", e => { q = e.target.value; $("#clear").style.display = q ? "block" : "none"; renderList(); });
+$("#clear").addEventListener("click", () => { q = ""; $("#q").value = ""; $("#clear").style.display = "none"; renderList(); $("#q").focus(); });
+window.addEventListener("hashchange", route);
+
+renderChips(); renderList(); route();
+</script>
+</body>
+</html>
