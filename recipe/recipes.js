@@ -286,10 +286,10 @@ const RECIPES = [
  scaleNote:"",
  source:{name:"Our own recipe"},
  groups:[{items:[
-  "[[g:250]] plain flour, Type 550 (밀가루), plus extra for dusting",
-  "[[g:3]] salt (소금, about [[v:0.5]] teaspoon)",
-  "[[v:1]] tablespoon cooking oil (식용유, [[g:13]])",
-  "[[g:150]] lukewarm water (미지근한 물, about [[v:0.625]] cup)"
+  "[[v:3]] cups plain flour, Type 550 (밀가루, [[g:375]]), plus extra for dusting",
+  "[[g:4.5]] salt (소금, about [[v:0.75]] teaspoon)",
+  "[[v:1.5]] tablespoons cooking oil (식용유, [[g:20]])",
+  "[[n:21]] eating spoons lukewarm water (미지근한 물, 밥숟가락, about [[g:210]] or [[v:14]] tablespoons)"
  ]}],
  steps:[
   "Mix the flour and salt in a bowl. Add the oil and lukewarm water and stir with chopsticks until shaggy.",
@@ -300,7 +300,8 @@ const RECIPES = [
   "Cut across with a knife into 3–5 mm strips. Shake the noodles loose straight away and toss with a little flour so they don't stick."
  ],
  notes:[
-  "The original note said 250 ml flour; that is only about 140 g and far too little for 150 g water, so this uses 250 g.",
+  "Ratio: 1 cup flour to 7 eating spoons (밥숟가락, about 10 ml each) of water, about 56% water. Measuring spoons are bigger: use about 4½ tablespoons (70 g) per cup instead, or the dough will be too wet.",
+  "Salt and oil are scaled up 1.5× from the earlier 250 g flour version.",
   "Cook in boiling broth or water for about 4–5 minutes, until the noodles float and are tender. Shake off the excess flour first for a clearer broth.",
   "Uncooked noodles can be frozen in portions, well floured; cook from frozen."
  ]
