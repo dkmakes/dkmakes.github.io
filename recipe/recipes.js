@@ -14,7 +14,8 @@ const CATS = {
   Cakes:{ko:"케이크",c:"#8a4f9e"},
   Bread:{ko:"빵",c:"#2f7fb5"},
   Frosting:{ko:"프로스팅",c:"#d0577b"},
-  Sauces:{ko:"소스",c:"#c4372c"}
+  Sauces:{ko:"소스",c:"#c4372c"},
+  Sides:{ko:"반찬·김치",c:"#3f8f3a"}
 };
 
 const RECIPES = [
@@ -246,6 +247,36 @@ const RECIPES = [
   "Toss with freshly cooked, drained noodles, about 25 g sauce per serving."
  ],
  notes:[]
+},
+{
+ id:"napa-geotjeori", art:"geotjeori", title:"Fresh Napa Cabbage Kimchi", ko:"알배추 겉절이", sub:"Geotjeori", cat:"Sides",
+ base:300, unit:{en:"g napa cabbage", ko:"g 알배추"}, makesNote:"",
+ preheat:"None", chill:"None; eat straight away or chill up to 2–3 days",
+ scaleNote:"",
+ source:{name:"Our own recipe"},
+ groups:[{items:[
+  "[[g:300]] baby napa cabbage (알배추)",
+  "[[g:21]] gochugaru, Korean chilli flakes (고춧가루, [[v:3]] tablespoons)",
+  "[[g:12]] sugar (설탕, [[v:1]] tablespoon)",
+  "[[g:36]] anchovy fish sauce (멸치액젓, [[v:2]] tablespoons)",
+  "[[g:18]] tuna sauce (참치액, [[v:1]] tablespoon)",
+  "[[g:40]] maesil-cheong, green plum syrup (매실청, [[v:2]] tablespoons)",
+  "[[g:15]] minced garlic (다진 마늘, [[v:1]] tablespoon)",
+  "[[g:30]] chives or spring onions (쪽파), or to taste",
+  "[[g:4]] sesame oil (참기름, about [[v:1]] teaspoon) and [[g:3]] toasted sesame seeds (통깨, about [[v:1]] teaspoon), or to taste"
+ ]}],
+ steps:[
+  "Separate the cabbage leaves, wash and drain well. Tear or cut into bite-sized pieces and pat dry; extra water dilutes the seasoning.",
+  "Cut the chives into 3–4 cm lengths.",
+  "Mix the gochugaru, sugar, anchovy fish sauce, tuna sauce, maesil-cheong and garlic in a large bowl. Leave 5 minutes so the chilli flakes soften.",
+  "Add the cabbage and chives and toss gently by hand (wear gloves) until every leaf is coated.",
+  "Finish with a drizzle of sesame oil and a sprinkle of sesame seeds. Serve straight away."
+ ],
+ notes:[
+  "The original list gives ingredients only; the method above is the usual way to make geotjeori. Chives, sesame oil and sesame seeds were \"to taste\" in the original; the grams are a starting point.",
+  "For softer leaves, salt the cut cabbage with about [[g:15]] coarse salt ([[v:1]] tablespoon) for 20–30 minutes, rinse once and drain well, then taste before adding all the fish sauce.",
+  "Geotjeori is best fresh; it releases water and turns sour within a few days."
+ ]
 }
 ];
 
@@ -318,4 +349,17 @@ biscuit:`<circle cx="60" cy="60" r="56" fill="#e3eef7"/><ellipse cx="60" cy="106
 <path d="M56 53 H70" stroke="#f6cf8a" stroke-width="2" stroke-linecap="round"/><path d="M26 73 H40" stroke="#f6cf8a" stroke-width="2" stroke-linecap="round"/>
 <path d="M60 52 C62 58 58 62 62 66 M78 51 C80 56 76 58 78 62" stroke="#f2b632" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="62" cy="68" r="2" fill="#f2b632"/>`
 };
-const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle"};
+ART.geotjeori = `<circle cx="60" cy="60" r="56" fill="#e6f2e2"/>
+<path d="M16 30 C24 26 30 30 34 24" stroke="#4f9e45" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M18 38 C26 34 32 38 38 32" stroke="#6bb85f" stroke-width="3" fill="none" stroke-linecap="round"/>
+<ellipse cx="60" cy="68" rx="40" ry="10" fill="#f3ece0"/>
+<path d="M28 70 C30 52 44 44 54 48 C58 56 52 66 46 70 Z" fill="#f4f1d8"/><path d="M28 70 C30 58 38 52 46 52" stroke="#e0dcae" stroke-width="2" fill="none"/>
+<path d="M44 70 C46 46 62 36 74 42 C76 54 68 64 60 70 Z" fill="#c9e3a4"/><path d="M50 66 C54 54 62 46 70 44" stroke="#f8f6e6" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M62 70 C66 50 82 46 92 54 C90 64 82 68 74 70 Z" fill="#eef0c8"/><path d="M68 68 C72 58 80 52 88 54" stroke="#dcdca6" stroke-width="2" fill="none"/>
+<path d="M30 68 C34 60 40 56 46 56 M52 60 C58 52 64 48 70 48 M70 66 C74 60 80 56 86 56" stroke="#d6452c" stroke-width="3.2" fill="none" stroke-linecap="round" opacity=".85"/>
+<circle cx="40" cy="62" r="1.6" fill="#b8321f"/><circle cx="58" cy="58" r="1.6" fill="#b8321f"/><circle cx="78" cy="60" r="1.6" fill="#b8321f"/><circle cx="66" cy="64" r="1.3" fill="#b8321f"/><circle cx="48" cy="66" r="1.3" fill="#b8321f"/>
+<path d="M36 58 L46 50 M60 54 L72 50 M74 62 L84 58" stroke="#4f9e45" stroke-width="2.4" stroke-linecap="round"/>
+<ellipse cx="44" cy="60" rx="1.6" ry="1" fill="#fff8e6"/><ellipse cx="62" cy="56" rx="1.6" ry="1" fill="#fff8e6"/><ellipse cx="80" cy="64" rx="1.6" ry="1" fill="#fff8e6"/><ellipse cx="54" cy="64" rx="1.6" ry="1" fill="#fff8e6"/>
+<path d="M18 68 H102 C102 92 84 106 60 106 C36 106 18 92 18 68 Z" fill="#fff"/><path d="M18 68 H102 C102 72 101 76 100 78 H20 C19 76 18 72 18 68 Z" fill="#e9eef2"/>
+<path d="M26 88 H94" stroke="#3f8f3a" stroke-width="2"/><path d="M30 94 H90" stroke="#3f8f3a" stroke-width="1" stroke-dasharray="3 3"/>
+<path d="M44 106 L76 106 L72 112 L48 112 Z" fill="#dfe6ea"/><path d="M28 80 C30 90 36 98 42 102" stroke="#f4f7f9" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori"};
