@@ -15,7 +15,8 @@ const CATS = {
   Bread:{ko:"빵",c:"#2f7fb5"},
   Frosting:{ko:"프로스팅",c:"#d0577b"},
   Sauces:{ko:"소스",c:"#c4372c"},
-  Sides:{ko:"반찬·김치",c:"#3f8f3a"}
+  Sides:{ko:"반찬·김치",c:"#3f8f3a"},
+  Noodles:{ko:"면",c:"#b0893a"}
 };
 
 const RECIPES = [
@@ -277,6 +278,32 @@ const RECIPES = [
   "For softer leaves, salt the cut cabbage with about [[g:15]] coarse salt ([[v:1]] tablespoon) for 20–30 minutes, rinse once and drain well, then taste before adding all the fish sauce.",
   "Geotjeori is best fresh; it releases water and turns sour within a few days."
  ]
+},
+{
+ id:"kalguksu-noodles", art:"kalguksu", title:"Hand-cut Kalguksu Noodles", ko:"칼국수 면", cat:"Noodles",
+ base:4, unit:{en:"servings", ko:"인분"}, makesNote:"",
+ preheat:"None", chill:"Dough 1 hour in the fridge",
+ scaleNote:"",
+ source:{name:"Our own recipe"},
+ groups:[{items:[
+  "[[g:250]] plain flour, Type 550 (밀가루), plus extra for dusting",
+  "[[g:3]] salt (소금, about [[v:0.5]] teaspoon)",
+  "[[v:1]] tablespoon cooking oil (식용유, [[g:13]])",
+  "[[g:150]] lukewarm water (미지근한 물, about [[v:0.625]] cup)"
+ ]}],
+ steps:[
+  "Mix the flour and salt in a bowl. Add the oil and lukewarm water and stir with chopsticks until shaggy.",
+  "Knead by hand for about 10 minutes until smooth and elastic. If it sticks badly, dust with a little flour.",
+  "Wrap the dough or put it in a bag and chill for 1 hour.",
+  "Dust the worktop generously with flour and roll the dough out flat and thin, about 2 mm.",
+  "Dust the sheet well with flour, then fold it over several times into a long flat stack.",
+  "Cut across with a knife into 3–5 mm strips. Shake the noodles loose straight away and toss with a little flour so they don't stick."
+ ],
+ notes:[
+  "The original note said 250 ml flour; that is only about 140 g and far too little for 150 g water, so this uses 250 g.",
+  "Cook in boiling broth or water for about 4–5 minutes, until the noodles float and are tender. Shake off the excess flour first for a clearer broth.",
+  "Uncooked noodles can be frozen in portions, well floured; cook from frozen."
+ ]
 }
 ];
 
@@ -362,4 +389,15 @@ ART.geotjeori = `<circle cx="60" cy="60" r="56" fill="#e6f2e2"/>
 <path d="M18 68 H102 C102 92 84 106 60 106 C36 106 18 92 18 68 Z" fill="#fff"/><path d="M18 68 H102 C102 72 101 76 100 78 H20 C19 76 18 72 18 68 Z" fill="#e9eef2"/>
 <path d="M26 88 H94" stroke="#3f8f3a" stroke-width="2"/><path d="M30 94 H90" stroke="#3f8f3a" stroke-width="1" stroke-dasharray="3 3"/>
 <path d="M44 106 L76 106 L72 112 L48 112 Z" fill="#dfe6ea"/><path d="M28 80 C30 90 36 98 42 102" stroke="#f4f7f9" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori"};
+ART.kalguksu = `<circle cx="60" cy="60" r="56" fill="#f6eedb"/>
+<rect x="14" y="66" width="92" height="34" rx="6" fill="#c99a5b"/><rect x="14" y="62" width="92" height="32" rx="6" fill="#e2b877"/>
+<path d="M20 70 H100 M20 78 H100 M20 86 H100" stroke="#d4a764" stroke-width="1.2"/>
+<path d="M24 72 C30 66 34 78 40 72 C46 66 50 78 56 72" stroke="#fbf3df" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M24 80 C30 74 34 86 40 80 C46 74 50 86 56 80" stroke="#f3e6c4" stroke-width="4" fill="none" stroke-linecap="round"/>
+<path d="M28 88 C34 82 38 92 44 86 C48 82 52 90 56 86" stroke="#fbf3df" stroke-width="4" fill="none" stroke-linecap="round"/>
+<rect x="60" y="68" width="26" height="18" rx="2" fill="#fbf3df"/><path d="M64 68 V86 M68 68 V86 M72 68 V86 M76 68 V86 M80 68 V86" stroke="#e8d7b0" stroke-width="1.2"/>
+<circle cx="30" cy="66" r="1.2" fill="#fff"/><circle cx="50" cy="90" r="1.2" fill="#fff"/><circle cx="90" cy="88" r="1.2" fill="#fff"/><circle cx="72" cy="92" r="1" fill="#fff"/>
+<path d="M70 58 L104 28" stroke="#b9c3c9" stroke-width="7" stroke-linecap="round"/><path d="M72 56 L102 30" stroke="#e8eef1" stroke-width="2" stroke-linecap="round"/>
+<path d="M66 64 L74 54" stroke="#3b2418" stroke-width="7" stroke-linecap="round"/>
+<path d="M18 40 C22 32 30 30 36 34 C42 30 48 34 46 42 C42 48 24 48 18 40 Z" fill="#fdf8ec"/><path d="M24 40 C28 36 34 36 38 38" stroke="#efe3c8" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori", Noodles:"kalguksu"};
