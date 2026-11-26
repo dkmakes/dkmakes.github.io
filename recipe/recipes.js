@@ -305,6 +305,54 @@ const RECIPES = [
   "Cook in boiling broth or water for about 4–5 minutes, until the noodles float and are tender. Shake off the excess flour first for a clearer broth.",
   "Uncooked noodles can be frozen in portions, well floured; cook from frozen."
  ]
+},
+{
+ id:"chai-cookies", art:"chai", title:"Chai Cookies", ko:"차이 쿠키", sub:"Brown butter · chai sugar", cat:"Cookies",
+ base:17, unit:{en:"cookies", ko:"개"}, makesNote:"",
+ preheat:"350°F (175°C, 155°C fan): turn on while the dough rests (step 6), not at the start", chill:"Brown butter cools about 40 min (fridge, stir every 10 min); dough rests 10 min",
+ scaleNote:"Cookie size and baking time stay the same; only the number of trays changes (6 cookies per tray).",
+ source:{name:"Stephanie's Sweets", url:"https://stephaniessweets.com/chai-cookies/"},
+ groups:[
+  {name:"Cookies", items:[
+   "[[v:18]] tablespoons unsalted butter (1 cup plus 2 tablespoons, [[g:255]])",
+   "[[v:2.667]] cups all-purpose flour, Type 550, spooned and levelled ([[g:333]])",
+   "[[v:1]] tablespoon cornstarch (Speisestärke, [[g:8]])",
+   "[[v:1]] teaspoon baking soda (Natron, [[g:5]])",
+   "[[v:1]] teaspoon salt ([[g:6]])",
+   "[[v:2]] teaspoons ground cinnamon ([[g:5]])",
+   "[[v:1]] teaspoon ground ginger ([[g:2]])",
+   "[[v:0.25]] teaspoon ground nutmeg ([[g:0.5]])",
+   "[[v:0.5]] teaspoon ground cardamom ([[g:1]])",
+   "[[v:0.25]] teaspoon ground cloves ([[g:0.5]])",
+   "[[v:1.5]] cups granulated sugar ([[g:300]])",
+   "[[n:2]] large eggs, room temperature (about [[g:100]])",
+   "[[v:1]] teaspoon pure vanilla extract ([[g:4]])"
+  ]},
+  {name:"Chai sugar", items:[
+   "[[v:0.5]] cup granulated sugar ([[g:100]])",
+   "[[v:1]] teaspoon ground cinnamon ([[g:2.5]])",
+   "[[v:0.5]] teaspoon ground ginger ([[g:1]])",
+   "[[v:0.25]] teaspoon ground nutmeg ([[g:0.5]])",
+   "[[v:0.25]] teaspoon ground cardamom ([[g:0.5]])",
+   "[[v:0.25]] teaspoon ground cloves ([[g:0.5]])"
+  ]}
+ ],
+ steps:[
+  "Brown the butter in a large frying pan until the milk solids separate and turn amber. Watch closely; it happens quickly.",
+  "Pour the brown butter into a bowl and cool for about 40 minutes. To speed it up, refrigerate and stir every 10 minutes until cool.",
+  "Sift the flour, cornstarch, baking soda, salt and all the cookie spices into a medium bowl.",
+  "In a large bowl, whisk the cooled brown butter with the sugar, eggs and vanilla.",
+  "Add the dry ingredients and mix with a spatula until combined. The dough will be thick.",
+  "Preheat the oven and line two baking trays with baking paper. Let the dough rest 10 minutes to reduce spreading.",
+  "Mix the chai sugar in a bowl. Scoop the dough with a large cookie scoop and roll each ball in the chai sugar.",
+  "Place 6 balls on each tray and bake 13–15 minutes, until the edges are lightly golden.",
+  "Rest the cookies on the hot tray for 6 minutes, then roll the tops in the chai sugar again. Cool on a rack."
+ ],
+ notes:[
+  "Spoon and level the flour, or weigh it; packed flour makes the cookies dry.",
+  "Take the eggs out about 2 hours ahead so they are at room temperature.",
+  "Grams are our conversions; the original gives cups and spoons only."
+ ]
 }
 ];
 
@@ -401,4 +449,13 @@ ART.kalguksu = `<circle cx="60" cy="60" r="56" fill="#f6eedb"/>
 <path d="M70 58 L104 28" stroke="#b9c3c9" stroke-width="7" stroke-linecap="round"/><path d="M72 56 L102 30" stroke="#e8eef1" stroke-width="2" stroke-linecap="round"/>
 <path d="M66 64 L74 54" stroke="#3b2418" stroke-width="7" stroke-linecap="round"/>
 <path d="M18 40 C22 32 30 30 36 34 C42 30 48 34 46 42 C42 48 24 48 18 40 Z" fill="#fdf8ec"/><path d="M24 40 C28 36 34 36 38 38" stroke="#efe3c8" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+ART.chai = `<circle cx="60" cy="60" r="56" fill="#f7e9d7"/><ellipse cx="60" cy="106" rx="42" ry="7" fill="#e8d2b4"/><ellipse cx="60" cy="102" rx="38" ry="6" fill="#fff"/>
+<g transform="rotate(-28 92 30)"><rect x="76" y="26" width="34" height="8" rx="4" fill="#8a4b25"/><path d="M80 30 H106" stroke="#b86d3c" stroke-width="1.5"/><path d="M78 27 C80 31 80 31 78 33" stroke="#5e3118" stroke-width="1.2" fill="none"/></g>
+<g transform="translate(26 30)"><path d="M0 -10 L3 -3 L10 0 L3 3 L0 10 L-3 3 L-10 0 L-3 -3 Z" fill="#6b3a1f"/><circle r="2.2" fill="#c8874a"/></g>
+<ellipse cx="74" cy="84" rx="26" ry="13" fill="#a9682f"/><ellipse cx="74" cy="80" rx="26" ry="12" fill="#d9a05c"/>
+<path d="M58 78 C64 74 70 82 76 76 C82 72 88 80 92 78 M62 86 C68 82 74 88 82 84" stroke="#b77a3a" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+<ellipse cx="48" cy="92" rx="30" ry="12" fill="#9e5f2a"/><ellipse cx="48" cy="86" rx="30" ry="14" fill="#e0aa66"/>
+<path d="M24 84 C30 78 36 90 44 82 C50 76 56 90 64 84 M30 92 C36 88 42 94 50 90 C56 86 62 92 68 88 M34 78 C38 76 42 80 46 76" stroke="#bd8040" stroke-width="2" fill="none" stroke-linecap="round"/>
+<circle cx="32" cy="82" r="1" fill="#fff8ea"/><circle cx="42" cy="88" r="1" fill="#fff8ea"/><circle cx="56" cy="80" r="1" fill="#fff8ea"/><circle cx="60" cy="90" r="1" fill="#fff8ea"/><circle cx="38" cy="94" r="1" fill="#fff8ea"/><circle cx="50" cy="84" r="0.9" fill="#fff8ea"/><circle cx="80" cy="76" r="1" fill="#fff8ea"/><circle cx="88" cy="82" r="1" fill="#fff8ea"/><circle cx="70" cy="80" r="0.9" fill="#fff8ea"/>
+<circle cx="36" cy="86" r="0.9" fill="#7a3f1a"/><circle cx="52" cy="92" r="0.9" fill="#7a3f1a"/><circle cx="76" cy="84" r="0.9" fill="#7a3f1a"/><circle cx="46" cy="80" r="0.8" fill="#7a3f1a"/>`;
 const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori", Noodles:"kalguksu"};
