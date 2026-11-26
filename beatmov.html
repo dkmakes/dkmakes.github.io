@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<title>BeatMov · Case Study · DK Lee</title>
+<meta name="description" content="BeatMov turns one product photo into a beat-synced 15-second ad for marketplace sellers. A solo product: positioning, design system, video engine and web app, built with AI agents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="case.css">
+<style>
+  .cs-logo.beatmov{height:34px}
+  .reel{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:30px}
+  .reel figure{margin:0}
+  .reel video{width:100%;aspect-ratio:9/16;object-fit:cover;background:#0f0f0f;border-radius:18px;border:6px solid #0f0f0f;box-shadow:0 20px 44px -20px rgba(22,19,15,.4)}
+  .reel figcaption{font-size:13px;color:var(--ink-soft);margin-top:10px;text-align:center}
+  .reel figcaption b{display:block;color:var(--ink);font-weight:600}
+  .pipe{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:26px}
+  .pipe div{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+  .pipe small{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:8px}
+  .pipe b{display:block;font-size:15.5px;margin-bottom:6px}
+  .pipe p{font-size:13.5px;color:var(--ink-soft)}
+  .pipe .ai{background:var(--accent-soft);border-color:#ecc9ba}
+  .shots.desktop{grid-template-columns:1fr;max-width:none}
+  .stack{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .stack span{font-size:13.5px;border:1px solid var(--line);background:var(--white);border-radius:999px;padding:6px 12px;color:var(--ink-soft)}
+  .note{font-size:13.5px;color:#8a8378;margin-top:14px;max-width:60ch}
+  @media (max-width:860px){.reel{grid-template-columns:repeat(2,1fr)}.pipe{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">DK<span>.</span>Lee</a>
+    <div style="display:flex;gap:24px;align-items:center;font-size:14.5px;font-weight:500">
+      <a href="assets/DK-Lee-Resume.pdf" target="_blank" rel="noopener" style="color:var(--ink-soft)">Resume</a>
+      <a href="index.html#work" class="back">← All work</a>
+    </div>
+  </div>
+</header>
+
+<div class="cs-hero">
+  <div class="wrap">
+    <img class="cs-logo beatmov" src="assets/beatmov/wordmark.svg" alt="BeatMov">
+    <div class="cs-meta">BeatMov · AI Video SaaS · 2026</div>
+    <h1 class="display">One product photo in, a 15-second ad out.</h1>
+    <p class="sub">BeatMov is a micro-SaaS for marketplace sellers on Coupang, Naver Smartstore, Amazon and Shopify. The seller uploads photos; AI reads the product, writes the copy, and cuts a kinetic ad on the beat of the music. I designed and built it end to end, working with AI agents as my team.</p>
+    <div class="cs-facts">
+      <div class="cs-fact"><small>My role</small><b>Founder: product, design, build</b></div>
+      <div class="cs-fact"><small>Status</small><b>Private beta, Korea first</b></div>
+      <div class="cs-fact"><small>Team</small><b>Me + Claude agents (dev, QA, UX, marketing)</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- Problem -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">Problem</div>
+    <h2 class="display">Small sellers need video, but video is the hardest asset to make.</h2>
+    <p class="body">On Coupang and Smartstore, short product videos sit at the top of the page and in shorts feeds. Most small sellers have only a few product photos. Their options were all bad:</p>
+    <div class="cards3">
+      <div class="pcard"><div class="n"><em>1</em>Agencies</div><h4>Too expensive</h4><p>A shoot and an edit cost more than many sellers earn on the product in a month.</p></div>
+      <div class="pcard"><div class="n"><em>2</em>Free tools</div><h4>Slideshow quality</h4><p>Template apps pan across photos with stock music. It looks cheap, and shoppers scroll past.</p></div>
+      <div class="pcard"><div class="n"><em>3</em>DIY editing</div><h4>Time and skill</h4><p>Writing copy, cutting on the beat and respecting each platform's safe zones is a craft most sellers do not have time to learn.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Positioning -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">Positioning</div>
+    <h2 class="display">Apple-like product films, for almost free.</h2>
+    <p class="body">Quality is the differentiator. Before writing product code I studied reference films frame by frame (cut timing, type size, how long a word stays on screen) and set a rule: <strong>no template ships unless it survives a side-by-side with the references.</strong> Two early experiments, a beat pulse and camera shake, were removed after review because they felt dizzying.</p>
+  </div>
+</section>
+
+<!-- Results reel -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">Output</div>
+    <h2 class="display">Four templates, one engine.</h2>
+    <p class="body">Each video below was made from a set of plain product photos and the seller's one-line description. Same engine, different template and music, chosen for the product.</p>
+    <div class="reel">
+      <figure><video src="assets/beatmov/serum_breath15.mp4" poster="assets/beatmov/serum_breath15.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption><b>Breath</b>Calm, lots of air. Skincare.</figcaption></figure>
+      <figure><video src="assets/beatmov/runner_drive15.mp4" poster="assets/beatmov/runner_drive15.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption><b>Kinetic Rush</b>Fast cuts, big type. Sport.</figcaption></figure>
+      <figure><video src="assets/beatmov/buds_grid15.mp4" poster="assets/beatmov/buds_grid15.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption><b>Grid</b>Facts in cells. Tech.</figcaption></figure>
+      <figure><video src="assets/beatmov/diffuser_kin10.mp4" poster="assets/beatmov/diffuser_kin10.jpg" muted loop playsinline autoplay preload="metadata"></video><figcaption><b>Kinetic</b>Type-led. Home fragrance.</figcaption></figure>
+    </div>
+    <p class="note">Demo products are fictional and branded for testing. Videos play without sound here; in the product every cut lands on a hit in the music.</p>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">How it works</div>
+    <h2 class="display">AI where judgement helps, rules where trust matters.</h2>
+    <p class="body">I split the pipeline so that AI only does what it is good at. Choosing the template and the colours is a documented formula, not a model, so results are explainable and repeatable.</p>
+    <div class="pipe">
+      <div><small>1 · Input</small><b>Photos</b><p>One to ten photos. Name and description are optional.</p></div>
+      <div class="ai"><small>2 · AI</small><b>Read the product</b><p>Type, energy, premium feel, facts it can see. Fills in empty details.</p></div>
+      <div><small>3 · Rules</small><b>Pick templates</b><p>Scores every ready template; three different ones become three options.</p></div>
+      <div class="ai"><small>4 · AI</small><b>Write the copy</b><p>Short lines per scene, checked against ad-law and plain-language rules.</p></div>
+      <div><small>5 · Engine</small><b>Cut on the beat</b><p>Scenes are written in beats, not seconds, so every change lands on the music.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Design decisions -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">Key decisions</div>
+    <h2 class="display">Small rules that keep the ads honest and good.</h2>
+    <div class="cards2">
+      <div class="pcard"><div class="n"><em>1</em>Product fidelity</div><h4>The product is never redrawn</h4><p>AI may make backgrounds, but the product keeps its original pixels. When a cut-out removed a white bottle cap along with the white background, I changed the design to extend the photo's own background instead.</p></div>
+      <div class="pcard"><div class="n"><em>2</em>Whole product</div><h4>Never crop what you are selling</h4><p>Every template shows the whole product before any close-up, on any photo shape. A seller's wide underwater scooter lost both wings once; that became a rule for every template.</p></div>
+      <div class="pcard"><div class="n"><em>3</em>Copy that is legal</div><h4>Three tiers for seller copy</h4><p>Block (profanity, illegal claims), warn and log (superlatives, efficacy claims), allow the rest. AI copy may only state facts found in the description.</p></div>
+      <div class="pcard"><div class="n"><em>4</em>Plain words</div><h4>Words a shopper would say</h4><p>After a line-by-line copy review, jargon ("signature", "hygienic") is banned or replaced, and one-word lines are not allowed.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Flow -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">Experience</div>
+    <h2 class="display">Photos to download in four steps.</h2>
+    <p class="body">The first version asked sellers to fill in a details form before making a video. The redesign cut that step and goes straight from photos to video: the AI fills in the details while it works and shows what it read, so the seller can correct it.</p>
+    <div class="shots">
+      <figure><img src="assets/beatmov/photos_phone.jpg" alt="Upload photos" data-zoom="assets/beatmov/photos_phone.jpg"><figcaption>1 · Upload photos, tap "Make video"</figcaption></figure>
+      <figure><img src="assets/beatmov/options_phone.jpg" alt="Three options" data-zoom="assets/beatmov/options_phone.jpg"><figcaption>2 · Three options: different templates, each with its own copy</figcaption></figure>
+      <figure><img src="assets/beatmov/options2_phone.jpg" alt="Live preview" data-zoom="assets/beatmov/options2_phone.jpg"><figcaption>3 · Live preview plays in the browser, before any file is rendered</figcaption></figure>
+    </div>
+    <div class="shots desktop" style="margin-top:34px">
+      <figure><img src="assets/beatmov/options_pc.jpg" alt="Option picker on desktop" data-zoom="assets/beatmov/options_pc.jpg"><figcaption>Desktop: the AI's ranking and a one-line reason for each template.</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- Build -->
+<section class="blk">
+  <div class="wrap reveal">
+    <div class="klabel">How I built it</div>
+    <h2 class="display">A one-person company run with AI agents.</h2>
+    <p class="body">I set up Claude as a small team with clear lanes: <strong>development</strong> in Claude Code, an independent <strong>QA</strong> agent that reviews every step and can block a release, a <strong>UX and template</strong> role that owns the design system and prototypes, and a <strong>manager</strong> that keeps the schedule. They hand work to each other through written handoffs; I make every decision and keep a decision log.</p>
+    <p class="body">The same engine renders the browser preview and the final MP4, so what the seller sees is what they download. Videos are rendered on a small rented server; the web app runs at the edge.</p>
+    <div class="stack">
+      <span>Next.js on Cloudflare Workers</span><span>Supabase (auth, database)</span><span>Cloudflare R2</span><span>Python render worker (Hetzner)</span><span>Gemini (vision, copy, music)</span><span>Own design system</span><span>Claude Code agents</span>
+    </div>
+  </div>
+</section>
+
+<!-- Next -->
+<section class="blk result">
+  <div class="wrap reveal">
+    <div class="klabel">What's next</div>
+    <h2 class="display">Free launch, then paid levels.</h2>
+    <p class="body">Next steps are a free launch in Korea, payments, and two higher production levels: an AI-made background behind the real product, and one short AI-made video shot. Results from real sellers will be added here after launch.</p>
+  </div>
+</section>
+
+<div class="next">
+  <div class="wrap">
+    <a href="signal-screen/index.html">Next: Signal → Screen design system →</a>
+  </div>
+</div>
+
+<footer>© 2026 DK Lee · dkmakes.com</footer>
+
+<script>
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+<script src="lightbox.js"></script>
+</body>
+</html>
