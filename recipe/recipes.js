@@ -16,7 +16,8 @@ const CATS = {
   Frosting:{ko:"프로스팅",c:"#d0577b"},
   Sauces:{ko:"소스",c:"#c4372c"},
   Sides:{ko:"반찬·김치",c:"#3f8f3a"},
-  Noodles:{ko:"면",c:"#b0893a"}
+  Noodles:{ko:"면",c:"#b0893a"},
+  Breakfast:{ko:"브런치",c:"#d98a1f"}
 };
 
 const RECIPES = [
@@ -353,6 +354,47 @@ const RECIPES = [
   "Take the eggs out about 2 hours ahead so they are at room temperature.",
   "Grams are our conversions; the original gives cups and spoons only."
  ]
+},
+{
+ id:"french-crepes", art:"crepe", title:"Classic French Crepes", ko:"프렌치 크레이프", sub:"Sweet or savoury", cat:"Breakfast",
+ base:10, unit:{en:"crepes", ko:"장"}, makesNote:"about",
+ preheat:"None (25 cm non-stick pan over medium heat when cooking)", chill:"Batter rests 20–30 min, or up to 2 days in the fridge",
+ scaleNote:"Each crepe uses ¼ cup (60 ml) batter in a 25 cm pan; only the number of crepes changes.",
+ source:{name:"The Flavor Bender", url:"https://www.theflavorbender.com/classic-french-crepes/"},
+ groups:[
+  {name:"Batter", items:[
+   "[[v:1.25]] cups milk (10 fl oz, [[g:300]])",
+   "[[n:3]] large eggs (about [[g:150]])",
+   "[[v:2]] tablespoons oil ([[g:26]]) or melted butter ([[g:28]])",
+   "[[v:2]] teaspoons sugar ([[g:8]]) for savoury crepes, or [[v:3]] tablespoons ([[g:37]]) for sweet crepes",
+   "[[v:0.5]] teaspoon kosher salt ([[g:2]])",
+   "[[v:4]] ounces all-purpose flour, Type 550 (scant [[v:1]] cup, [[g:113]])"
+  ]},
+  {name:"To cook", items:[
+   "[[v:2]] tablespoons softened butter or oil ([[g:28]]), plus more as needed"
+  ]},
+  {name:"Lemon and sugar crepes (optional)", items:[
+   "[[n:1-2]] lemons, sliced thickly or cut into wedges",
+   "[[v:0.25]] cup vanilla sugar (Vanillezucker, [[g:50]])",
+   "Whipped cream"
+  ]}
+ ],
+ steps:[
+  "Whisk the milk and eggs in a jug until combined, then whisk in the oil or melted butter.",
+  "Put the flour, salt and sugar in a large bowl. Add about [[v:0.75-1]] cup ([[g:180-240]]) of the liquid and mix gently into a smooth paste, just a few seconds.",
+  "Add the rest of the liquid and mix to a smooth, thin batter. (Or blend everything for a few seconds, flour last.)",
+  "Cover and rest at least 20–30 minutes. The batter keeps in the fridge overnight, up to 2 days.",
+  "Heat a 25 cm non-stick pan over medium heat and brush it with butter.",
+  "Stir the batter, pour in ¼ cup (60 ml) and swirl to coat the base evenly, edges first, then the centre.",
+  "Extra soft: cook about 30 seconds until just set with no browning, then slide out (or flip for a few seconds). Classic: cook about 40 seconds until the edges brown and crisp, flip and cook 10–15 seconds more.",
+  "Repeat with the rest of the batter, buttering the pan as needed and stirring the batter each time. Stack the crepes on a plate.",
+  "Lemon and sugar crepes: sprinkle about 1 teaspoon sugar over half a crepe, fold in half and then into quarters. Serve with lemon to squeeze over and whipped cream."
+ ],
+ notes:[
+  "4 oz flour is a scant cup; weigh it if you can. The 8 oz = 1 cup rule is only for liquids.",
+  "To rewarm a stack, cover with a plate and microwave about 30 seconds, then lift the plate off quickly so they don't go soggy.",
+  "Grams other than the flour are our conversions."
+ ]
 }
 ];
 
@@ -458,4 +500,12 @@ ART.chai = `<circle cx="60" cy="60" r="56" fill="#f7e9d7"/><ellipse cx="60" cy="
 <path d="M24 84 C30 78 36 90 44 82 C50 76 56 90 64 84 M30 92 C36 88 42 94 50 90 C56 86 62 92 68 88 M34 78 C38 76 42 80 46 76" stroke="#bd8040" stroke-width="2" fill="none" stroke-linecap="round"/>
 <circle cx="32" cy="82" r="1" fill="#fff8ea"/><circle cx="42" cy="88" r="1" fill="#fff8ea"/><circle cx="56" cy="80" r="1" fill="#fff8ea"/><circle cx="60" cy="90" r="1" fill="#fff8ea"/><circle cx="38" cy="94" r="1" fill="#fff8ea"/><circle cx="50" cy="84" r="0.9" fill="#fff8ea"/><circle cx="80" cy="76" r="1" fill="#fff8ea"/><circle cx="88" cy="82" r="1" fill="#fff8ea"/><circle cx="70" cy="80" r="0.9" fill="#fff8ea"/>
 <circle cx="36" cy="86" r="0.9" fill="#7a3f1a"/><circle cx="52" cy="92" r="0.9" fill="#7a3f1a"/><circle cx="76" cy="84" r="0.9" fill="#7a3f1a"/><circle cx="46" cy="80" r="0.8" fill="#7a3f1a"/>`;
-const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori", Noodles:"kalguksu"};
+ART.crepe = `<circle cx="60" cy="60" r="56" fill="#fdf0d6"/><ellipse cx="60" cy="104" rx="44" ry="7" fill="#efdcb2"/><ellipse cx="60" cy="100" rx="40" ry="6" fill="#fff"/>
+<path d="M22 94 C24 84 40 80 60 80 C80 80 96 84 98 94 C80 98 40 98 22 94 Z" fill="#e8b764"/><path d="M26 92 C40 88 80 88 94 92" stroke="#d29a44" stroke-width="1.5" fill="none"/>
+<path d="M30 90 L60 56 L90 90 Z" fill="#f2cd82"/><path d="M60 56 L90 90 L72 90 Z" fill="#e4b25f"/>
+<circle cx="50" cy="78" r="2" fill="#d79a46"/><circle cx="62" cy="72" r="1.6" fill="#d79a46"/><circle cx="56" cy="86" r="1.8" fill="#d79a46"/><circle cx="76" cy="82" r="1.5" fill="#c98a3a"/><circle cx="44" cy="86" r="1.4" fill="#d79a46"/>
+<path d="M40 82 L60 60 M60 60 L80 84" stroke="#fbe4ae" stroke-width="2" stroke-linecap="round"/>
+<circle cx="52" cy="70" r="0.9" fill="#fff"/><circle cx="58" cy="78" r="0.9" fill="#fff"/><circle cx="66" cy="80" r="0.9" fill="#fff"/><circle cx="48" cy="82" r="0.9" fill="#fff"/>
+<path d="M74 52 C74 42 84 38 90 42 C96 38 104 44 100 52 C98 56 76 56 74 52 Z" fill="#fffaf2"/><path d="M80 50 C84 46 90 46 94 48" stroke="#efe3cf" stroke-width="2" fill="none" stroke-linecap="round"/>
+<g transform="translate(28 40)"><circle r="12" fill="#f2c94c"/><circle r="9.5" fill="#fbe58a"/><path d="M0 -9 V9 M-9 0 H9 M-6.4 -6.4 L6.4 6.4 M-6.4 6.4 L6.4 -6.4" stroke="#f2c94c" stroke-width="1.4"/><circle r="1.6" fill="#f2c94c"/></g>`;
+const CAT_ART = {Cookies:"pb", Cakes:"marble", Bread:"biscuit", Frosting:"frosting", Sauces:"noodle", Sides:"geotjeori", Noodles:"kalguksu", Breakfast:"crepe"};
